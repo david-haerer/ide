@@ -1,0 +1,4 @@
+#!/bin/sh
+
+git branch --merged | grep -v "\*\|$(git default)" | xargs -n 1 git branch -d
+
