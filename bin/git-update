@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -eu
+
+if [ -z "$*" ]; then
+    exit 1
+fi
+
+message=""
+for file in "$@"; do
+    git add "${file}"
+    path="$(git rev-parse --show-prefix)${file}"
+    message="${message}${path} "
+done
+message="${message%?}" # remove trailing space
+
+git commit -m "${message}"
