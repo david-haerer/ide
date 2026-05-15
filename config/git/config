@@ -1,0 +1,65 @@
+[alias]
+    abort        = "!f() { git rebase --abort || git merge --abort; }; f"
+    amend        = "!f() { git add $1 && git commit --amend --no-edit; }; f"
+    br           = branch
+    ci           = commit
+    co           = checkout
+    continue     = "rebase --continue"
+    default      = !git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+    force        = "push --force-with-lease"
+    graph        = "! git-graph"
+    history      = "!f() { steps=$1; git diff HEAD~$((steps+1)) HEAD~$steps; }; f"
+    initialize   = "!f() { git init && git commit --allow-empty -m 'Initial commit'; }; f"
+    integrated   = "!f() { git merge-base --is-ancestor $1 HEAD; }; f"
+    note         = "!f() { git commit --allow-empty -m \"$1\"; }; f"
+    patch        = "add --patch"
+    remove       = "! ~/.config/git/remove"
+    rename       = "!f() { git mv $1 $2 && git commit -m 'rename '$1' -> '$2''; }; f"
+    root         = "rev-parse --show-toplevel"
+    st           = status
+    staged       = "diff --cached"
+    stats        = "! ~/.config/git/stats"
+    subtree-add  = "!f() { git subtree add --prefix $2 $1 ${3:-main} --squash; }; f"
+    subtree-pull = "!f() { git subtree pull --prefix $2 $1 ${3:-main} --squash; }; f"
+    subtree-push = "!f() { git subtree push --prefix $1 $2 ${3:-main}; }; f"
+    tidy         = "! git-tidy"
+    touch        = "commit --amend --allow-empty -C HEAD"
+    unstage      = "restore --staged"
+    update       = "! git-update"
+[init]
+    defaultBranch = main
+[pull]
+	rebase = true 			 # Rebase (instead of merge) on pull
+[push]
+	autoSetupRemote = true   # Automatically set upstream branch on push
+[diff]
+	algorithm = histogram    # Clearer diffs on moved/edited lines
+	colorMoved = plain       # Highlight moved blocks in diffs
+	mnemonicPrefix = true    # More intuitive refs in diff output
+[merge]
+    conflictstyle = diff3
+[commit]
+	verbose = true           # Include diff comment in commit message template
+[column]
+	ui = auto 			     # Output in columns when possible
+[branch]
+	sort = -committerdate    # Sort branches by most recent commit first
+[tag]
+	sort = -version:refname  # Sort version numbers as you would expect
+[rerere]
+	enabled = true           # Record and reuse conflict resolutions
+	autoupdate = true        # Apply stored conflict resolutions automatically
+[core]
+    pager = delta
+	editor = helix
+[pager]
+    log = "batcat --style=grid"
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    light = false      # set to true if you're in a terminal w/ a light background color
+    side-by-side = true
+    numbers = true
+[log]
+    date = iso
