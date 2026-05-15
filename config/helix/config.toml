@@ -1,0 +1,26 @@
+theme = "ayu_dark"
+
+[editor]
+line-number = "relative"
+mouse = false
+bufferline = "multiple"
+
+[keys.normal]
+esc = ["collapse_selection", "keep_primary_selection"]
+w = "move_next_sub_word_start"
+b = "move_prev_sub_word_start"
+e = "move_next_sub_word_end"
+
+[keys.select]
+w = "extend_next_sub_word_start"
+b = "extend_prev_sub_word_start"
+e = "extend_next_sub_word_end"
+
+[editor.cursor-shape]
+insert = "bar"
+
+[editor.file-picker]
+hidden = false
+
+[keys.normal.space]
+W = [":toggle soft-wrap.enable", ":redraw"]
