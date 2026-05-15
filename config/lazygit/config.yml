@@ -1,0 +1,4 @@
+customCommands:
+  - key: 'u'
+    context: 'files'
+    command: 'git update {{.SelectedFile.Name}}'
