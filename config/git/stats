@@ -1,0 +1,61 @@
+#!/bin/sh
+
+git log --shortstat | rg "Date:|changed" | python3 -c '
+import shutil
+import fileinput
+import datetime
+
+width, _ = shutil.get_terminal_size((80, 20))
+commits = {}
+
+date = None
+for line in fileinput.input():
+    if line.startswith("Date"):
+        parts = line[8:38].split()
+        parts[2] = parts[2].zfill(2)
+        str_timestamp = " ".join(parts)
+        timestamp = datetime.datetime.strptime(str_timestamp, "%Y-%m-%d %H:%M:%S %z")
+        newer_date = date
+        date = timestamp.date()
+        if newer_date is not None:
+            diff = (newer_date - date).days
+            if diff > 1:
+                for i in range(1, diff):
+                    commits[newer_date - datetime.timedelta(days=1)] = {
+                        "+": 0,
+                        "-": 0,
+                    }
+        continue
+    
+    commit = commits.get(date, {})
+    if len(commit) == 0:
+        commit["+"] = 0
+        commit["-"] = 0
+
+    for x in [x.strip().split(" ") for x in line.split(",")]:
+        if x[1].startswith("insertion"):
+            commit["+"] += int(x[0])
+        if x[1].startswith("deletion"):
+            commit["-"] += int(x[0])
+
+    commits[date] = commit
+
+max_changes = max([x["-"] + x["+"] for x in commits.values()])
+max_digits_deletions = max([len(str(x["-"])) for x in commits.values()])
+max_digits_insertions = max([len(str(x["+"])) for x in commits.values()])
+
+for date, commit in commits.items():
+    n_deletions = commit["-"]
+    n_insertions = commit["+"]
+    str_deletions = f"-{n_deletions}".rjust(max_digits_deletions + 1)
+    str_insertions = f"+{n_insertions}".rjust(max_digits_insertions + 1)
+    prefix = f"{date}: {str_deletions} {str_insertions} "
+    # prefix = f"{date}: "
+    n_prefix = len(prefix)
+    n_changes = n_deletions + n_insertions
+    n_spaces = width - n_prefix
+    factor = n_spaces / max_changes
+    deletions = "-" * int(factor * n_deletions)
+    insertions = "+" * int(factor * n_insertions)
+    print(f"{prefix}{deletions}{insertions}")
+'
