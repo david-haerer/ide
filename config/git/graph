@@ -1,0 +1,17 @@
+#!/bin/sh
+
+tab='%x09'
+eol='%n'
+commit='%C(yellow)%h%C(reset)'
+date='%C(blue)%ad%C(reset)'
+author='%C(dim white)~ %an%C(reset)'
+ref='%C(auto)%d%C(reset)'
+message='%C(white)%s%C(reset)'
+
+git log --graph \
+    --abbrev-commit \
+    --decorate \
+    --topo-order \
+    --format=format:"$tab$commit $date $author$ref$eol$tab  $message$eol" \
+    --date=format:'%Y-%m-%d %H:%M' \
+    $@
