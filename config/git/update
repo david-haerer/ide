@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+if [ -z "$@" ]; then
+    git pull --rebase
+    git push
+    exit 0
+fi
+
+msg=""
+for file in "$@"; do
+    git add "${GIT_PREFIX}${file}"
+    msg="${msg}${GIT_PREFIX}${file} " # Add file to commit message.
+done
+
+msg="${msg%?}" # Remove trailing space.
+git commit -m "${msg}"
