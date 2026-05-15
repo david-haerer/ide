@@ -1,0 +1,194 @@
+[[grammar]]
+name = "vim"
+source = { git = "https://github.com/tree-sitter-grammars/tree-sitter-vim", rev = "bc1364d922952138957a62105171ed68e73fbb6c" }
+
+[[grammar]]
+name = "lilypond"
+source = { git = "https://github.com/nwhetsell/tree-sitter-lilypond", rev = "6b0f470b2e5acbfc4d1d64ba89b396adecf06ea4", subpath = "lilypond" }
+
+[language-server.json]
+command = "vscode-json-languageserver"
+args = ["--stdio"]
+
+[language-server.github]
+command = "gh-actions-language-server"
+args = ["--stdio"]
+
+[language-server.bash]
+command = "bash-language-server"
+args = ["start"]
+
+[language-server.yaml]
+command = "yaml-language-server"
+args = ["--stdio"]
+
+[language-server.ruff]
+command = "uvx"
+args = ["ruff", "server"]
+
+[language-server.ty]
+command = "uvx"
+args = ["ty", "server"]
+
+[language-server.eslint]
+command = "vscode-eslint-language-server"
+args = ["--stdio"]
+
+[language-server.eslint.config]
+codeActionsOnSave = { mode = "all", "source.fixAll.eslint" = true }
+format = { enable = true }
+nodePath = ""
+quiet = false
+rulesCustomizations = []
+run = "onType"
+validate = "on"
+experimental = {}
+problems = { shortenToSingleLine = false }
+
+[language-server.eslint.config.codeAction]
+disableRuleComment = { enable = true, location = "separateLine" }
+showDocumentation = { enable = false }
+
+[[language]]
+name = "c"
+formatter = { command = "clang-format", args = ["--style=file"] }
+auto-format = true
+
+[[language]]
+name = "zig"
+formatter = { command = "zig", args = ["fmt", "--stdin"] }
+auto-format = true
+
+[[language]]
+name = "go"
+formatter = { command = "gofmt" }
+auto-format = true
+
+[[language]]
+name = "latex"
+file-types = ["tex"]
+auto-format = true
+formatter = { command = "prettier", args = [
+  "--plugin",
+  "prettier-plugin-latex",
+  "--write",
+] }
+
+[[language]]
+name = "vim"
+roots = []
+scope = "source.vim"
+file-types = ["vim"]
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "lilypond"
+scope = "source.lilypond"
+injection-regex = "lilypond"
+file-types = ["ly"]
+roots = []
+comment-token = "%"
+indent = { tab-width = 4, unit = "    " }
+formatter = { command = "ly", args = ["reformat"] }
+auto-format = true
+
+[[language]]
+name = "lco"
+roots = []
+scope = "source.lco"
+file-types = ["lco"]
+comment-tokens = "%"
+auto-format = true
+indent = { tab-width = 2, unit = "  " }
+
+[[language]]
+name = "lua"
+auto-format = true
+formatter = { command = "stylua", args = ["-"] }
+
+[[language]]
+name = "astro"
+file-types = ["astro"]
+auto-format = true
+formatter = { command = "bunx", args = [  "prettier", "--parser", "astro", "--write"] }
+
+[[language]]
+name = "python"
+language-servers = ["ruff", "ty"]
+formatter = { command = "sh", args = [
+  "-c",
+  "uvx ruff check --fix --select I - | uvx ruff format --preview -",
+] }
+auto-format = true
+
+[[language]]
+name = "bash"
+language-servers = ["bash"]
+file-types = ["sh", "bash"]
+formatter = { command = "shfmt", args = ["-"] }
+auto-format = true
+
+[[language]]
+name = "yaml"
+file-types = ["yml", "yaml"]
+language-servers = ["yaml"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "yaml", "--print-width", "120"] }
+auto-format = true
+
+[[language]]
+name = "toml"
+file-types = ["toml"]
+formatter = { command = "taplo", args = ["format", "-"] }
+auto-format = true
+
+[[language]]
+name = "markdown"
+file-types = ["md"]
+language-servers = ["marksman"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "markdown"] }
+auto-format = true
+
+[[language]]
+name = "typescript"
+language-servers = [ "typescript-language-server", "eslint" ]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
+name = "tsx"
+language-servers = [ "typescript-language-server", "eslint" ]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
+name = "javascript"
+language-servers = [ "typescript-language-server", "eslint" ]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
+name = "jsx"
+language-servers = [ "typescript-language-server", "eslint" ]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+auto-format = true
+
+[[language]]
+name = "json"
+language-servers = ["json"]
+file-types = ["json"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "json", "--print-width", "120" ] }
+auto-format = true
+
+[[language]]
+name = "html"
+language-servers = [ "vscode-html-language-server" ]
+formatter = { command = "bunx", args = ["prettier", "--parser", "html" ] }
+auto-format = true
+
+[[language]]
+name = "css"
+language-servers = [ "vscode-css-language-server" ]
+formatter = { command = "bunx", args = ["prettier", "--parser", "css" ] }
+auto-format = true
+
