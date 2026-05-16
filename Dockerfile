@@ -18,9 +18,13 @@ RUN pacman -Syu --noconfirm \
         github-cli \
         helix \
         imagemagick \
+        inetutils \
         jq \
         lazygit \
+        less \
         man \
+        marksman \
+        nmap \
         opencode \
         openvpn \
         poppler \
@@ -29,6 +33,7 @@ RUN pacman -Syu --noconfirm \
         starship \
         sudo \
         sudo \
+        the_silver_searcher \
         tzdata \
         uv \
         uv \
