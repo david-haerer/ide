@@ -53,7 +53,7 @@
     pager = delta
 	editor = helix
 [pager]
-    log = "batcat --style=grid"
+    log = "bat --style=grid"
 [interactive]
     diffFilter = delta --color-only
 [delta]
