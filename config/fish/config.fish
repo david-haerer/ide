@@ -15,6 +15,9 @@ function y
 end
 
 abbr c "clear; eza --icons=always"
+abbr ... cd ../..
+abbr .... cd ../../..
+abbr b cd -
 abbr cmx chmod
 abbr cmx chmod +x
 abbr dc docker compose
