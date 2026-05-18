@@ -34,7 +34,9 @@ RUN pacman -Syu --noconfirm \
         starship \
         sudo \
         sudo \
+        taplo \
         the_silver_searcher \
+        tombi \
         tzdata \
         uv \
         uv \
