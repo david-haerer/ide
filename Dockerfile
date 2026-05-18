@@ -5,6 +5,7 @@ RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 RUN pacman -Syu --noconfirm \
         7zip \
         bash-language-server \
+        bat \
         bun \
         diffnav \
         eza \
