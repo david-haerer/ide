@@ -4,6 +4,13 @@ theme = "ayu_dark"
 line-number = "relative"
 mouse = false
 bufferline = "multiple"
+clipboard-provider = "termcode"
+
+[editor.cursor-shape]
+insert = "bar"
+
+[editor.file-picker]
+hidden = false
 
 [keys.normal]
 esc = ["collapse_selection", "keep_primary_selection"]
@@ -15,12 +22,6 @@ e = "move_next_sub_word_end"
 w = "extend_next_sub_word_start"
 b = "extend_prev_sub_word_start"
 e = "extend_next_sub_word_end"
-
-[editor.cursor-shape]
-insert = "bar"
-
-[editor.file-picker]
-hidden = false
 
 [keys.normal.space]
 W = [":toggle soft-wrap.enable", ":redraw"]
