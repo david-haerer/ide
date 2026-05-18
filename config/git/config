@@ -7,7 +7,7 @@
     continue     = "rebase --continue"
     default      = !git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
     force        = "push --force-with-lease"
-    graph        = "! git-graph"
+    graph        = "! $HOME/.config/git/graph"
     history      = "!f() { steps=$1; git diff HEAD~$((steps+1)) HEAD~$steps; }; f"
     initialize   = "!f() { git init && git commit --allow-empty -m 'Initial commit'; }; f"
     integrated   = "!f() { git merge-base --is-ancestor $1 HEAD; }; f"
@@ -22,10 +22,10 @@
     subtree-add  = "!f() { git subtree add --prefix $2 $1 ${3:-main} --squash; }; f"
     subtree-pull = "!f() { git subtree pull --prefix $2 $1 ${3:-main} --squash; }; f"
     subtree-push = "!f() { git subtree push --prefix $1 $2 ${3:-main}; }; f"
-    tidy         = "! git-tidy"
+    tidy         = "! $HOME/.config/git/tidy"
     touch        = "commit --amend --allow-empty -C HEAD"
     unstage      = "restore --staged"
-    update       = "! git-update"
+    update       = "! $HOME/.config/git/update"
 [init]
     defaultBranch = main
 [pull]
