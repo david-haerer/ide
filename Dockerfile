@@ -1,7 +1,7 @@
 FROM archlinux:latest
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-# RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
+RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 RUN pacman -Syu --noconfirm \
         7zip \
         bash-language-server \
@@ -16,6 +16,7 @@ RUN pacman -Syu --noconfirm \
         git \
         git-delta \
         github-cli \
+        go \
         helix \
         imagemagick \
         inetutils \
@@ -60,7 +61,6 @@ COPY --chown=$USERNAME:$USERNAME config/helix /home/$USERNAME/.config/helix
 COPY --chown=$USERNAME:$USERNAME config/lazygit /home/$USERNAME/.config/lazygit
 COPY --chown=$USERNAME:$USERNAME config/opencode /home/$USERNAME/.config/opencode
 COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/starship.toml
-# COPY --chown=david:david ./bin/ /home/david/.local/bin/
 COPY --chown=$USERNAME:$USERNAME --chmod=755 entrypoint.sh /home/$USERNAME/.local/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["tail", "-f", "/dev/null"]
