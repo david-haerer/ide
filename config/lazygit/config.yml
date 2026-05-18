@@ -1,7 +1,41 @@
+git:
+  pagers:
+    - pager: delta --dark --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+  # branchLogCmd: git-graph --no-pager
+
 customCommands:
   - key: "u"
     context: "files"
     command: "git update {{.SelectedFile.Name}}"
+
 os:
   copyToClipboardCmd: printf "\033]52;c;$(printf {{text}} | base64 -w 0)\a" > /dev/tty
   readFromClipboardCmd: ""
+
+# Ayu Dark Theme for Lazygit
+gui:
+  theme:
+    # Border color of focused window - Ayu accent blue
+    activeBorderColor: ["#FF8F40", bold]
+    # Border color of non-focused windows - muted gray
+    inactiveBorderColor: ["#686868"]
+    # Border color when searching - Ayu cyan
+    searchingActiveBorderColor: ["#5CCFE6", bold]
+    # Keybindings help text - Ayu blue
+    optionsTextColor: ["#73B8FF"]
+    # Background color of selected line - subtle highlight
+    selectedLineBgColor: ["#273747"]
+    # Background color of selected line when view doesn't have focus
+    inactiveViewSelectedLineBgColor: ["#1A2633"]
+    # Foreground color of copied commit - Ayu blue
+    cherryPickedCommitFgColor: ["#73B8FF"]
+    # Background color of copied commit - Ayu cyan
+    cherryPickedCommitBgColor: ["#5CCFE6"]
+    # Foreground color of marked base commit (for rebase) - Ayu blue
+    markedBaseCommitFgColor: ["#73B8FF"]
+    # Background color of marked base commit - Ayu yellow/orange
+    markedBaseCommitBgColor: ["#FF8F40"]
+    # Color for file with unstaged changes - Ayu red
+    unstagedChangesColor: ["#F07178"]
+    # Default text color - Ayu foreground
+    defaultFgColor: ["#B3B1AD"]
