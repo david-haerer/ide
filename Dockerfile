@@ -49,6 +49,7 @@ RUN pacman -Syu --noconfirm \
     && pacman -Scc --noconfirm
 RUN gh extension install dlvhdr/gh-dash
 RUN gh extension install dlvhdr/gh-enhance
+RUN uv tool install poetry
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
