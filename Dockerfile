@@ -10,6 +10,7 @@ RUN pacman -Syu --noconfirm \
         bun \
         diffnav \
         docker \
+        docker-compose \
         eza \
         fastfetch \
         fd \
