@@ -67,6 +67,7 @@ ENV PATH="/home/$USERNAME/bin:/home/$USERNAME/.local/bin:$PATH"
 COPY --chown=$USERNAME:$USERNAME config/fish /home/$USERNAME/.config/fish
 COPY --chown=$USERNAME:$USERNAME config/git /home/$USERNAME/.config/git
 COPY --chown=$USERNAME:$USERNAME config/helix /home/$USERNAME/.config/helix
+COPY --chown=$USERNAME:$USERNAME config/lazydocker /home/$USERNAME/.config/lazydocker
 COPY --chown=$USERNAME:$USERNAME config/lazygit /home/$USERNAME/.config/lazygit
 COPY --chown=$USERNAME:$USERNAME config/opencode /home/$USERNAME/.config/opencode
 COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/starship.toml
