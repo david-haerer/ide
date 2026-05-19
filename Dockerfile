@@ -33,15 +33,14 @@ RUN pacman -Syu --noconfirm \
         resvg \
         ripgrep \
         rsync \
-        serie \
+        shellcheck \
+        shfmt \
         starship \
-        sudo \
         sudo \
         taplo \
         the_silver_searcher \
         tombi \
         tzdata \
-        uv \
         uv \
         yazi \
         zig \
