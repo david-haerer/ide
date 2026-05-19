@@ -32,6 +32,7 @@ RUN pacman -Syu --noconfirm \
         poppler \
         resvg \
         ripgrep \
+        rsync \
         serie \
         starship \
         sudo \
