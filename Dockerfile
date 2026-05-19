@@ -6,8 +6,10 @@ RUN pacman -Syu --noconfirm \
         7zip \
         bash-language-server \
         bat \
+        btop \
         bun \
         diffnav \
+        docker \
         eza \
         fastfetch \
         fd \
@@ -22,6 +24,7 @@ RUN pacman -Syu --noconfirm \
         imagemagick \
         inetutils \
         jq \
+        lazydocker \
         lazygit \
         less \
         man \
