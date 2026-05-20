@@ -37,3 +37,6 @@ function chpwd --on-variable PWD
     clear
     eza --icons=always
 end
+
+clear
+eza --icons=always
