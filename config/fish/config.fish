@@ -25,6 +25,9 @@ abbr e exit
 abbr g git
 abbr hx helix
 abbr l eza --icons=always
+abbr la eza --icons=always -a
+abbr ll eza --icons=always -l
+abbr lla eza --icons=always -la
 abbr ld lazydocker
 abbr lg lazygit
 abbr oc opencode
