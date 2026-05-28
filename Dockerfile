@@ -71,6 +71,7 @@ COPY --chown=$USERNAME:$USERNAME config/lazydocker /home/$USERNAME/.config/lazyd
 COPY --chown=$USERNAME:$USERNAME config/lazygit /home/$USERNAME/.config/lazygit
 COPY --chown=$USERNAME:$USERNAME config/opencode /home/$USERNAME/.config/opencode
 COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/starship.toml
-COPY --chown=$USERNAME:$USERNAME --chmod=755 entrypoint.sh /home/$USERNAME/.local/bin/entrypoint.sh
+COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
+COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["tail", "-f", "/dev/null"]
