@@ -73,5 +73,5 @@ COPY --chown=$USERNAME:$USERNAME config/opencode /home/$USERNAME/.config/opencod
 COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/starship.toml
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["entrypoint"]
 CMD ["tail", "-f", "/dev/null"]
