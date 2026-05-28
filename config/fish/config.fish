@@ -31,7 +31,7 @@ abbr lla eza --icons=always -la
 abbr ld lazydocker
 abbr lg lazygit
 abbr oc opencode
-abbr n helix $NOTES/$(date -Iseconds).md
+abbr n note
 
 set -g fish_greeting
 
