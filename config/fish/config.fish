@@ -34,7 +34,7 @@ abbr oc opencode
 abbr n note
 
 set -g fish_greeting
-
+set -xg YEAR $(year)
 fish_add_path $HOME/bin
 
 function chpwd --on-variable PWD
