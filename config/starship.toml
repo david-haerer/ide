@@ -10,7 +10,7 @@ vimcmd_symbol = "[V](bold green)"
 format = "with 🛜 [$env_value](red bold dimmed) "
 
 [env_var.YEAR]
-format = "[$env_value](bold) "
+format = "[$env_value](bold)"
 
 [time]
 disabled = false
@@ -19,7 +19,7 @@ time_format = '%H:%M'
 
 [hostname]
 ssh_only = false
-format = '[\[](bold red dimmed)[$ssh_symbol](bold blue)[$hostname](bold red dimmed)[\]](bold red dimmed)'
+format = '[\[](bold red dimmed)[$ssh_symbol](bold blue)[$hostname](bold red dimmed)[\]](bold red dimmed) '
 disabled = false
 
 [container]
