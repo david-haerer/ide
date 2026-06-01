@@ -19,7 +19,7 @@ time_format = '%H:%M'
 
 [hostname]
 ssh_only = false
-format = '[\[](bold red dimmed)[$ssh_symbol](bold blue)[$hostname](bold red dimmed)[\]](bold red dimmed) '
+format = '[\[](bold red dimmed)[$ssh_symbol](bold blue)[$hostname](bold red dimmed)[\]](bold red dimmed)'
 disabled = false
 
 [container]
