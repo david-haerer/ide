@@ -1,12 +1,26 @@
 add_newline = false
-
-[hostname]
-ssh_only = false
-format = '[$ssh_symbol](bold blue) on [$hostname](bold red) '
-trim_at = '.companyname.com'
-disabled = false
+format = '$all${env_var.YEAR}$time$character'
 
 [character]
 success_symbol = "[➜](bold green)"
 error_symbol = "[✗](bold red)"
-vicmd_symbol = "[V](bold green)"
+vimcmd_symbol = "[V](bold green)"
+
+[env_var.https_proxy]
+format = "with 🛜 [$env_value](red bold dimmed) "
+
+[env_var.YEAR]
+format = "[$env_value](bold) "
+
+[time]
+disabled = false
+format = '[$time]($style) '
+time_format = '%H:%M'
+
+[hostname]
+ssh_only = false
+format = '[$ssh_symbol](bold blue) on [$hostname](bold red) '
+disabled = false
+
+[container]
+disabled = true
