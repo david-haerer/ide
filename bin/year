@@ -7,21 +7,21 @@ def main():
     today = dt.date.today()
     month, day = today.month, today.day
     if (month, day) < (2, 2) or (month, day) >= (12, 21):
-        return "✨❄️"  # W2
+        return "✨❄️"
     if (month, day) < (3, 21):
-        return "❄️🌱"  # F1
+        return "❄️🌱"
     if (month, day) < (5, 1):
-        return "🌱🌸"  # F2
+        return "🌱🌸"
     if (month, day) < (6, 21):
-        return "🌸☀️"  # S1
-    if (month, day) < (8, 1):
-        return "☀️🌾"  # S2
+        return "🌸☀️"
+    if (month, day) < (8, 2):
+        return "☀️🌾"
     if (month, day) < (9, 21):
-        return "🌾🍁"  # H1
-    if (month, day) < (11, 11):
-        return "🍁🕯️"  # H2
+        return "🌾🍁"
+    if (month, day) < (11, 1):
+        return "🍁🕯️"
     if (month, day) < (12, 21):
-        return "🕯️✨"  # W1
+        return "🕯️✨"
     return
 
 
