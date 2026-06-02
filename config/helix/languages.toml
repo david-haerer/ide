@@ -111,7 +111,12 @@ formatter = { command = "stylua", args = ["-"] }
 name = "astro"
 file-types = ["astro"]
 auto-format = true
-formatter = { command = "bunx", args = [  "prettier", "--parser", "astro", "--write"] }
+formatter = { command = "bunx", args = [
+  "prettier",
+  "--parser",
+  "astro",
+  "--write",
+] }
 
 [[language]]
 name = "python"
@@ -126,14 +131,20 @@ auto-format = true
 name = "bash"
 language-servers = ["bash"]
 file-types = ["sh", "bash"]
-formatter = { command = "shfmt", args = ["-"] }
+formatter = { command = "shfmt", args = ["-i", "2", "-"] }
 auto-format = true
 
 [[language]]
 name = "yaml"
 file-types = ["yml", "yaml"]
 language-servers = ["yaml"]
-formatter = { command = "bunx", args = ["prettier", "--parser", "yaml", "--print-width", "120"] }
+formatter = { command = "bunx", args = [
+  "prettier",
+  "--parser",
+  "yaml",
+  "--print-width",
+  "120",
+] }
 auto-format = true
 
 [[language]]
@@ -151,44 +162,49 @@ auto-format = true
 
 [[language]]
 name = "typescript"
-language-servers = [ "typescript-language-server", "eslint" ]
-formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+language-servers = ["typescript-language-server", "eslint"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript"] }
 auto-format = true
 
 [[language]]
 name = "tsx"
-language-servers = [ "typescript-language-server", "eslint" ]
-formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+language-servers = ["typescript-language-server", "eslint"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript"] }
 auto-format = true
 
 [[language]]
 name = "javascript"
-language-servers = [ "typescript-language-server", "eslint" ]
-formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+language-servers = ["typescript-language-server", "eslint"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript"] }
 auto-format = true
 
 [[language]]
 name = "jsx"
-language-servers = [ "typescript-language-server", "eslint" ]
-formatter = { command = "bunx", args = ["prettier", "--parser", "typescript" ] }
+language-servers = ["typescript-language-server", "eslint"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "typescript"] }
 auto-format = true
 
 [[language]]
 name = "json"
 language-servers = ["json"]
 file-types = ["json"]
-formatter = { command = "bunx", args = ["prettier", "--parser", "json", "--print-width", "120" ] }
+formatter = { command = "bunx", args = [
+  "prettier",
+  "--parser",
+  "json",
+  "--print-width",
+  "120",
+] }
 auto-format = true
 
 [[language]]
 name = "html"
-language-servers = [ "vscode-html-language-server" ]
-formatter = { command = "bunx", args = ["prettier", "--parser", "html" ] }
+language-servers = ["vscode-html-language-server"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "html"] }
 auto-format = true
 
 [[language]]
 name = "css"
-language-servers = [ "vscode-css-language-server" ]
-formatter = { command = "bunx", args = ["prettier", "--parser", "css" ] }
+language-servers = ["vscode-css-language-server"]
+formatter = { command = "bunx", args = ["prettier", "--parser", "css"] }
 auto-format = true
-
