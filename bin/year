@@ -5,35 +5,41 @@ import datetime as dt
 
 def year(today: dt.date):
     month, day = today.month, today.day
-    if (month, day) < (2, 2) or (month, day) >= (12, 21):
-        return "✨❄️"
+    if (month, day) >= (12, 21) or (month, day) < (2, 2):
+        return "✨"
     if (month, day) < (3, 21):
-        return "❄️🌱"
+        return "❄️"
     if (month, day) < (5, 1):
-        return "🌱🌸"
+        return "🌱"
     if (month, day) < (6, 21):
-        return "🌸☀️"
+        return "🌸"
     if (month, day) < (8, 2):
-        return "☀️🌾"
+        return "☀️"
     if (month, day) < (9, 21):
-        return "🌾🍁"
+        return "🌾"
     if (month, day) < (11, 1):
-        return "🍁🕯️"
+        return "🍁"
     if (month, day) < (12, 21):
-        return "🕯️✨"
+        return "🕯️"
     return
 
 
+def moon(today: dt.date):
+    REF_NEW_MOON = dt.date(2026, 5, 16)
+    LUNAR_CYCLE = 29.53058867
+    days_into_cycle = (today - REF_NEW_MOON).days % LUNAR_CYCLE
+    fraction = days_into_cycle / LUNAR_CYCLE
+    phases = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"]
+    return phases[round(fraction * 8) % 8]
+
+
 def week(today: dt.date):
-    # return ["☽💜", "♂❤️", "☿💛", "♃💙", "♀💚", "♄🖤", "☉🧡"][today.weekday()]
     return ["☽", "♂", "☿", "♃", "♀", "♄", "☉"][today.weekday()]
 
 
 def main():
     today = dt.date.today()
-    y = year(today)
-    w = week(today)
-    return f"{y}{w}"
+    return f"{year(today)}{moon(today)}{week(today)}"
 
 
 print(main())
