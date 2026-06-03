@@ -11,6 +11,7 @@ RUN pacman -Syu --noconfirm \
         diffnav \
         docker \
         docker-compose \
+        eslint-language-server \
         eza \
         fastfetch \
         fd \
@@ -44,6 +45,7 @@ RUN pacman -Syu --noconfirm \
         taplo \
         the_silver_searcher \
         tombi \
+        typescript-language-server \
         tzdata \
         uv \
         yazi \
