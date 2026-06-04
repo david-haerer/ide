@@ -39,7 +39,7 @@
 [merge]
     conflictstyle = diff3
 [commit]
-	verbose = true           # Include diff comment in commit message template
+	verbose = false          # Include diff comment in commit message template
 [column]
 	ui = auto 			     # Output in columns when possible
 [branch]
