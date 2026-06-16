@@ -38,6 +38,7 @@ RUN pacman -Syu --noconfirm \
         resvg \
         ripgrep \
         rsync \
+        rustup \
         shellcheck \
         shfmt \
         starship \
@@ -54,6 +55,8 @@ RUN pacman -Syu --noconfirm \
     && pacman -Scc --noconfirm
 # RUN gh extension install dlvhdr/gh-dash
 # RUN gh extension install dlvhdr/gh-enhance
+RUN rustup default stable
+RUN cargo install --git https://github.com/itsjunetime/tdf.git
 RUN uv tool install poetry
 ARG USERNAME=dev
 ARG USER_UID=1000
