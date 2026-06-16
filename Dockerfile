@@ -4,15 +4,18 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 RUN pacman -Syu --noconfirm \
         7zip \
+        base-devel \
         bash-language-server \
         bat \
         btop \
         bun \
+        debugedit \
         diffnav \
         docker \
         docker-compose \
         eslint-language-server \
         eza \
+        fakeroot \
         fastfetch \
         fd \
         ffmpeg \
@@ -77,7 +80,6 @@ COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin
 # RUN gh extension install dlvhdr/gh-dash
 # RUN gh extension install dlvhdr/gh-enhance
 RUN rustup default stable
-RUN cargo install --git https://github.com/itsjunetime/tdf.git
 RUN uv tool install poetry
 RUN helix --grammar fetch && helix --grammar build
 ENTRYPOINT ["entrypoint"]
