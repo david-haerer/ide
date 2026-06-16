@@ -38,6 +38,7 @@ RUN pacman -Syu --noconfirm \
         opencode \
         openvpn \
         poppler \
+        reflector \
         resvg \
         ripgrep \
         rsync \
@@ -55,7 +56,8 @@ RUN pacman -Syu --noconfirm \
         yazi \
         zig \
         zoxide \
-    && pacman -Scc --noconfirm
+    && pacman -Scc --noconfirm \
+    && reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
