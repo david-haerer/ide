@@ -1,3 +1,5 @@
+use-grammars = { only = ["lilypond"] }
+
 [[grammar]]
 name = "vim"
 source = { git = "https://github.com/tree-sitter-grammars/tree-sitter-vim", rev = "bc1364d922952138957a62105171ed68e73fbb6c" }
