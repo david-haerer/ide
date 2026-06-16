@@ -53,11 +53,6 @@ RUN pacman -Syu --noconfirm \
         zig \
         zoxide \
     && pacman -Scc --noconfirm
-# RUN gh extension install dlvhdr/gh-dash
-# RUN gh extension install dlvhdr/gh-enhance
-RUN rustup default stable
-RUN cargo install --git https://github.com/itsjunetime/tdf.git
-RUN uv tool install poetry
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
@@ -79,5 +74,11 @@ COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/st
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin/year
+# RUN gh extension install dlvhdr/gh-dash
+# RUN gh extension install dlvhdr/gh-enhance
+RUN rustup default stable
+RUN cargo install --git https://github.com/itsjunetime/tdf.git
+RUN uv tool install poetry
+RUN helix --grammar fetch && helix --grammar build
 ENTRYPOINT ["entrypoint"]
 CMD ["tail", "-f", "/dev/null"]
