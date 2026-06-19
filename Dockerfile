@@ -83,6 +83,7 @@ COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin
 # RUN gh extension install dlvhdr/gh-enhance
 RUN rustup default stable
 RUN uv tool install poetry
+RUN uv tool install python-ly
 RUN helix --grammar fetch && helix --grammar build
 ENTRYPOINT ["entrypoint"]
 CMD ["tail", "-f", "/dev/null"]
