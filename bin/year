@@ -6,21 +6,21 @@ import datetime as dt
 def year(today: dt.date):
     month, day = today.month, today.day
     if (month, day) >= (12, 21) or (month, day) < (2, 2):
-        return "✨"
+        return "✨❄️"
     if (month, day) < (3, 21):
-        return "❄️"
+        return "❄️🌱"
     if (month, day) < (5, 1):
-        return "🌱"
+        return "🌱🌸"
     if (month, day) < (6, 21):
-        return "🌸"
+        return "🌸☀️"
     if (month, day) < (8, 2):
-        return "☀️"
+        return "☀️🌾"
     if (month, day) < (9, 21):
-        return "🌾"
+        return "🌾🍁"
     if (month, day) < (11, 1):
-        return "🍁"
+        return "🍁🕯️"
     if (month, day) < (12, 21):
-        return "🕯️"
+        return "🕯️✨"
     return
 
 
