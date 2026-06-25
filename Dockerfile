@@ -85,5 +85,7 @@ RUN rustup default stable
 RUN uv tool install poetry
 RUN uv tool install python-ly
 RUN helix --grammar fetch && helix --grammar build
+RUN go install github.com/reteps/dockerfmt@latest
+RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent
 ENTRYPOINT ["entrypoint"]
 CMD ["tail", "-f", "/dev/null"]
