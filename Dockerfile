@@ -25,6 +25,7 @@ RUN pacman -Syu --noconfirm \
         git-delta \
         github-cli \
         go \
+        hcloud \
         helix \
         imagemagick \
         inetutils \
