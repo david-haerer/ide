@@ -70,6 +70,7 @@ WORKDIR /home/$USERNAME
 ENV COLORTERM="truecolor"
 ENV EDITOR="helix"
 ENV PATH="/home/$USERNAME/bin:/home/$USERNAME/.local/bin:$PATH"
+RUN sudo groupadd docker && sudo usermod -aG docker $USER && newgrp docker
 COPY --chown=$USERNAME:$USERNAME config/fish /home/$USERNAME/.config/fish
 COPY --chown=$USERNAME:$USERNAME config/git /home/$USERNAME/.config/git
 COPY --chown=$USERNAME:$USERNAME config/helix /home/$USERNAME/.config/helix
