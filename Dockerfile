@@ -1,70 +1,71 @@
 FROM archlinux:latest
 ENV TZ=Europe/Berlin
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 RUN pacman -Syu --noconfirm \
-        7zip \
-        base-devel \
-        bash-language-server \
-        bat \
-        btop \
-        bun \
-        debugedit \
-        diffnav \
-        docker \
-        docker-compose \
-        eslint-language-server \
-        eza \
-        fakeroot \
-        fastfetch \
-        fd \
-        ffmpeg \
-        fish \
-        fzf \
-        git \
-        git-delta \
-        github-cli \
-        go \
-        hcloud \
-        helix \
-        imagemagick \
-        inetutils \
-        jq \
-        lazydocker \
-        lazygit \
-        less \
-        man \
-        marksman \
-        nmap \
-        opencode \
-        openvpn \
-        poppler \
-        reflector \
-        resvg \
-        ripgrep \
-        rsync \
-        rustup \
-        shellcheck \
-        shfmt \
-        starship \
-        sudo \
-        taplo \
-        the_silver_searcher \
-        tombi \
-        typescript-language-server \
-        tzdata \
-        uv \
-        yazi \
-        zig \
-        zoxide \
+    7zip \
+    base-devel \
+    bash-language-server \
+    bat \
+    btop \
+    bun \
+    debugedit \
+    diffnav \
+    docker \
+    docker-compose \
+    eslint-language-server \
+    eza \
+    fakeroot \
+    fastfetch \
+    fd \
+    ffmpeg \
+    fish \
+    fzf \
+    git \
+    git-delta \
+    github-cli \
+    go \
+    hcloud \
+    helix \
+    imagemagick \
+    inetutils \
+    jq \
+    lazydocker \
+    lazygit \
+    less \
+    man \
+    marksman \
+    nmap \
+    opencode \
+    openvpn \
+    poppler \
+    reflector \
+    resvg \
+    ripgrep \
+    rsync \
+    rustup \
+    shellcheck \
+    shfmt \
+    starship \
+    sudo \
+    taplo \
+    the_silver_searcher \
+    tombi \
+    typescript-language-server \
+    tzdata \
+    uv \
+    yazi \
+    zig \
+    zoxide \
     && pacman -Scc --noconfirm \
     && reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+RUN mkdir -p /etc/docker && echo '{"storage-driver": "vfs"}' >/etc/docker/daemon.json
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -G docker -m -s /usr/bin/fish $USERNAME \
-    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME
+    && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/$USERNAME
 USER $USERNAME
 WORKDIR /home/$USERNAME
 ENV COLORTERM="truecolor"
