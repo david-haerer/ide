@@ -88,5 +88,6 @@ RUN uv tool install python-ly
 RUN helix --grammar fetch && helix --grammar build
 RUN go install github.com/reteps/dockerfmt@latest
 RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent
+RUN bun add -g --ignore-scripts @devcontainers/cli
 ENTRYPOINT ["entrypoint"]
 CMD ["tail", "-f", "/dev/null"]
