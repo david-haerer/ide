@@ -210,3 +210,8 @@ name = "css"
 language-servers = ["vscode-css-language-server"]
 formatter = { command = "bunx", args = ["prettier", "--parser", "css"] }
 auto-format = true
+
+[[language]]
+name = "dockerfile"
+formatter = { command = "dockerfmt" }
+auto-format = true
