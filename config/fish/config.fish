@@ -37,6 +37,7 @@ set -g fish_greeting
 set -xg YEAR $(year)
 fish_add_path $HOME/bin
 fish_add_path $HOME/.bun/bin
+fish_add_path $HOME/go/bin
 
 function chpwd --on-variable PWD
     clear
