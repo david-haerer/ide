@@ -63,14 +63,13 @@ ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
 RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m -s /usr/bin/fish $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -G docker -m -s /usr/bin/fish $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME
 USER $USERNAME
 WORKDIR /home/$USERNAME
 ENV COLORTERM="truecolor"
 ENV EDITOR="helix"
 ENV PATH="/home/$USERNAME/bin:/home/$USERNAME/.local/bin:$PATH"
-RUN sudo groupadd docker && sudo usermod -aG docker "$USERNAME"
 COPY --chown=$USERNAME:$USERNAME config/fish /home/$USERNAME/.config/fish
 COPY --chown=$USERNAME:$USERNAME config/git /home/$USERNAME/.config/git
 COPY --chown=$USERNAME:$USERNAME config/helix /home/$USERNAME/.config/helix
