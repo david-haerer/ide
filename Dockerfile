@@ -38,6 +38,7 @@ RUN pacman -Syu --noconfirm \
     marksman \
     nmap \
     opencode \
+    opentofu \
     openvpn \
     poppler \
     reflector \
