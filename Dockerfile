@@ -30,6 +30,7 @@ RUN pacman -Syu --noconfirm \
     imagemagick \
     inetutils \
     jq \
+    kubectl \
     lazydocker \
     lazygit \
     less \
@@ -48,10 +49,12 @@ RUN pacman -Syu --noconfirm \
     shfmt \
     starship \
     sudo \
+    talosctl \
     taplo \
     the_silver_searcher \
     tombi \
     typescript-language-server \
+    wget \
     tzdata \
     uv \
     yazi \
