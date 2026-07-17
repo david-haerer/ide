@@ -40,6 +40,7 @@ RUN pacman -Syu --noconfirm \
     opencode \
     opentofu \
     openvpn \
+    pandoc \
     poppler \
     reflector \
     resvg \
