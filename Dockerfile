@@ -53,6 +53,7 @@ RUN pacman -Syu --noconfirm \
     sudo \
     talosctl \
     taplo \
+    tectonic \
     the_silver_searcher \
     tombi \
     typescript-language-server \
