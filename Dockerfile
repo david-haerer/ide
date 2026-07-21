@@ -34,6 +34,7 @@ RUN pacman -Syu --noconfirm \
     lazydocker \
     lazygit \
     less \
+    lilypond \
     man \
     marksman \
     nmap \
@@ -92,7 +93,10 @@ COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin
 RUN rustup default stable
 RUN uv tool install poetry
 RUN uv tool install python-ly
-RUN helix --grammar fetch && helix --grammar build
+RUN helix --grammar fetch \
+    && helix --grammar build \
+    && mkdir /home/$USERNAME/.config/helix/runtime/queries \
+    && cp -r /home/$USERNAME/.config/helix/runtime/grammars/sources/lilypond/queries /home/$USERNAME/.config/helix/runtime/queries/lilypond
 RUN go install github.com/reteps/dockerfmt@latest
 RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent
 RUN bun add -g --ignore-scripts @devcontainers/cli
