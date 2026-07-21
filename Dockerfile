@@ -88,17 +88,17 @@ COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/st
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin/year
-# RUN gh extension install dlvhdr/gh-dash
-# RUN gh extension install dlvhdr/gh-enhance
-RUN rustup default stable
-RUN uv tool install poetry
-RUN uv tool install python-ly
 RUN helix --grammar fetch \
     && helix --grammar build \
     && mkdir /home/$USERNAME/.config/helix/runtime/queries \
     && cp -r /home/$USERNAME/.config/helix/runtime/grammars/sources/lilypond/queries /home/$USERNAME/.config/helix/runtime/queries/lilypond
+RUN rustup default stable
+RUN uv tool install poetry \
+    && uv tool install python-ly
 RUN go install github.com/reteps/dockerfmt@latest
-RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent
-RUN bun add -g --ignore-scripts @devcontainers/cli
+RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent \
+    && bun add -g --ignore-scripts @devcontainers/cli \
+    && bun add -g --ignore-scripts @devcontainers/cli \
+    && bun add -g --ignore-scripts @oh-my-pi/pi-coding-agent
 ENTRYPOINT ["entrypoint"]
 CMD ["tail", "-f", "/dev/null"]
