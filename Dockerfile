@@ -1,4 +1,5 @@
 FROM archlinux:latest
+ARG DOCKER_VERSION=29.6.2
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
@@ -66,7 +67,9 @@ RUN pacman -Syu --noconfirm \
     zoxide \
     && pacman -Scc --noconfirm \
     && reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
-RUN mkdir -p /etc/docker && echo '{"storage-driver": "vfs"}' >/etc/docker/daemon.json
+RUN curl -fsSL "https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VERSION}.tgz" \
+    | tar xz --strip-components=1 -C /usr/bin/ \
+    && mkdir -p /etc/docker && echo '{"storage-driver": "vfs"}' >/etc/docker/daemon.json
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
