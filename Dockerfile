@@ -65,7 +65,7 @@ RUN pacman -Syu --noconfirm \
     yazi \
     zig \
     zoxide \
-    && pacman -R docker \
+    && pacman -R docker --noconfirm \
     && pacman -Scc --noconfirm \
     && reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VERSION}.tgz" \
