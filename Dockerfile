@@ -68,7 +68,7 @@ RUN pacman -Syu --noconfirm \
     && pacman -R docker --noconfirm \
     && pacman -Scc --noconfirm \
     && reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
-RUN curl -fsSL "https://download.docker.com/linux/static/stable/aarch64/docker-${DOCKER_VERSION}.tgz" \
+RUN curl -fsSL "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
     | tar xz --strip-components=1 -C /usr/bin/ \
     && mkdir -p /etc/docker && echo '{"storage-driver": "vfs"}' >/etc/docker/daemon.json
 ARG USERNAME=dev
