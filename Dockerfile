@@ -39,6 +39,7 @@ RUN pacman -Syu --noconfirm \
     man \
     marksman \
     nmap \
+    openai-codex \
     opencode \
     opentofu \
     openvpn \
