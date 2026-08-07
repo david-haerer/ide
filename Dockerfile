@@ -100,7 +100,8 @@ RUN helix --grammar fetch \
 RUN rustup default stable
 RUN uv tool install poetry \
     && uv tool install python-ly
-RUN go install github.com/reteps/dockerfmt@latest
+RUN go install github.com/reteps/dockerfmt@latest \
+    && go install github.com/antopolskiy/kanban-md/cmd/kanban-md@latest
 RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent \
     && bun add -g --ignore-scripts @devcontainers/cli \
     && bun add -g --ignore-scripts @devcontainers/cli \
