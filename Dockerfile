@@ -21,6 +21,7 @@ RUN pacman -Syu --noconfirm \
     fd \
     ffmpeg \
     fish \
+    fluxcd \
     fzf \
     git \
     git-delta \
@@ -60,9 +61,9 @@ RUN pacman -Syu --noconfirm \
     the_silver_searcher \
     tombi \
     typescript-language-server \
-    wget \
     tzdata \
     uv \
+    wget \
     yazi \
     zig \
     zoxide \
