@@ -5,6 +5,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 RUN pacman -Syu --noconfirm \
     7zip \
+    azure-cli \
     base-devel \
     bash-language-server \
     bat \
