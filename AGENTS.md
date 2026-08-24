@@ -25,8 +25,10 @@ The entrypoint expects these env vars and will fail silently or misconfigure if 
 
 ## Config conventions
 
-- `config/*` is copied to `/home/dev/.config/*` at **build time**. Runtime changes inside the container are not persisted.
+- `config/*` is copied to `/home/dev/.config/*` at **build time**, except `config/omp` which is copied to `/home/dev/.omp` (omp reads `~/.omp`, not XDG). Runtime changes inside the container are not persisted.
 - `config/opencode/opencode.json` pins model to `openrouter/moonshotai/kimi-k2.6`, disables autoupdate/sharing, and registers the `chrome-devtools` MCP server via `bunx`.
+- `config/omp/agent/config.yml` is copied to `~/.omp/agent/config.yml` — omp's persistent settings (`modelRoles`, theme, etc.). A `setupVersion: 1` marker is included so the image ships "already set up" and skips the first-run wizard.
+- `bin/setup-skills.sh` installs community skills at build time into `~/.agents/skills/` (Agent Skills spec layout, read by omp's `agents` provider and future Codex) and symlinks them into `~/.codex/skills/` for `codex-cli` < 0.147 and omp's `codex` provider. Sources: `mattpocock/skills` (all non-deprecated categories) and `cursor/plugins` `pstack/skills`; name collisions (`tdd`, `teach`) keep the mattpocock copy canonical and prefix pstack's as `pstack-<name>`. Rebuild the image to refresh from upstream (shallow clones at `main`); override repo/ref with `MATT_POCOCK_REPO`/`MATT_POCOCK_REF`/`PSTACK_REPO`/`PSTACK_REF` build-args.
 - `config/helix/config.toml` uses `ayu_dark`, relative line numbers, mouse off, and remaps `w`/`b`/`e` to subword motions.
 - `config/fish/config.fish` defines abbreviations agents may see in shell sessions: `oc` (opencode), `hx` (helix), `lg` (lazygit), `dc` (docker compose), etc.
 
