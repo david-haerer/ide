@@ -1,0 +1,7 @@
+modelRoles:
+  default: openrouter/deepseek/deepseek-v4-flash-0731
+symbolPreset: nerd
+theme:
+  dark: titanium
+  light: light
+setupVersion: 1
