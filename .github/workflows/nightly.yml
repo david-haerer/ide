@@ -22,11 +22,8 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Compute date tag
-        run: echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
-        id: date
       - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: nightly,nightly.${{ steps.date.outputs.date }}
+          tags: latest
