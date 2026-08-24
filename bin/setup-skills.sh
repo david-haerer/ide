@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 # setup-skills.sh — install community skills from their source repos.
 #
-# Layout:
-#   ~/.agents/skills/<name>/SKILL.md   canonical store (Agent Skills spec layout)
-#   ~/.codex/skills/<name> -> symlink  legacy bridge: codex-cli < 0.147 reads
-#                                     ~/.codex/skills ($CODEX_HOME/skills), not
-#                                     ~/.agents/skills. omp's codex provider
-#                                     reads ~/.codex/skills too.
+# Canonical store: ~/.agents/skills/<name>/SKILL.md (Agent Skills spec layout).
+# Read natively by:
+#   - codex-cli >= 0.146: $HOME/.agents/skills (source: codex-rs/core-skills/src/loader.rs
+#     "// `$HOME/.agents/skills` (user-installed skills)")
+#   - omp/pi: agents provider scans ~/.agent/skills + ~/.agents/skills at user
+#     scope (priority 70). Also read via repo-local .agents/skills if checked in.
+# No symlinks needed — every consumer reads this one directory.
 #
-# Consumers:
-#   - omp/pi: agents provider scans ~/.agent/skills + ~/.agents/skills (pri 70);
-#     codex provider scans ~/.codex/skills (pri 70). Both follow symlinks.
-#   - codex-cli: ~/.codex/skills (symlinked dirs followed, documented).
+# Sources: mattpocock/skills (all non-deprecated categories) and
+# cursor/plugins pstack/skills. Name collisions (tdd, teach): mattpocock keeps
+# the canonical name, pstack is prefixed pstack-<name>.
 #
 # Updates: rebuild the image — this script clones fresh `main` each build.
-# Override refs/repos via the MATT_POCOCK_*/PSTACK_* env vars (build-args).
+# Override repos/refs via MATT_POCOCK_REPO/REF, PSTACK_REPO/REF build-args.
 
 set -euo pipefail
 
@@ -24,25 +24,21 @@ PSTACK_REPO="${PSTACK_REPO:-https://github.com/cursor/plugins.git}"
 PSTACK_REF="${PSTACK_REF:-main}"
 
 SKILLS_ROOT="${HOME}/.agents/skills"
-CODEX_ROOT="${HOME}/.codex/skills"
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
-# Both roots are owned by this script.
-rm -rf "$SKILLS_ROOT" "$CODEX_ROOT"
-mkdir -p "$SKILLS_ROOT" "$CODEX_ROOT"
+rm -rf "$SKILLS_ROOT"
+mkdir -p "$SKILLS_ROOT"
 
 install_skill() {
 	local src="$1" name="$2"
 	cp -a "$src" "${SKILLS_ROOT}/${name}"
-	ln -s "${SKILLS_ROOT}/${name}" "${CODEX_ROOT}/${name}"
 }
 
 echo "==> cloning mattpocock/skills (${MATT_POCOCK_REF})"
 git clone --depth 1 --branch "$MATT_POCOCK_REF" "$MATT_POCOCK_REPO" "$work/mattpocock"
 # mattpocock nests skills under category dirs: skills/<category>/<name>/SKILL.md.
-# Canonical names win; colliding pstack skills get prefixed below.
 for skill in "$work"/mattpocock/skills/*/*/; do
 	[[ -f "$skill/SKILL.md" ]] || continue
 	install_skill "$skill" "$(basename "$skill")"
@@ -62,4 +58,4 @@ for skill in "$work"/pstack/pstack/skills/*/; do
 done
 
 count="$(find "$SKILLS_ROOT" -maxdepth 1 -mindepth 1 -type d | wc -l)"
-echo "==> installed ${count} skills in ${SKILLS_ROOT} (symlinked into ${CODEX_ROOT})"
+echo "==> installed ${count} skills in ${SKILLS_ROOT}"
