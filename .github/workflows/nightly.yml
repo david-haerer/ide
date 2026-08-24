@@ -1,0 +1,32 @@
+name: Nightly Docker Image
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compute date tag
+        run: echo "date=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+        id: date
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: nightly,nightly.${{ steps.date.outputs.date }}
