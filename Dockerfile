@@ -91,10 +91,13 @@ COPY --chown=$USERNAME:$USERNAME config/helix /home/$USERNAME/.config/helix
 COPY --chown=$USERNAME:$USERNAME config/lazydocker /home/$USERNAME/.config/lazydocker
 COPY --chown=$USERNAME:$USERNAME config/lazygit /home/$USERNAME/.config/lazygit
 COPY --chown=$USERNAME:$USERNAME config/opencode /home/$USERNAME/.config/opencode
+COPY --chown=$USERNAME:$USERNAME config/omp /home/$USERNAME/.omp
 COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/starship.toml
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin/year
+COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/setup-skills.sh /home/$USERNAME/.local/bin/setup-skills.sh
+RUN /home/$USERNAME/.local/bin/setup-skills.sh
 RUN helix --grammar fetch \
     && helix --grammar build \
     && mkdir /home/$USERNAME/.config/helix/runtime/queries \
