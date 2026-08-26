@@ -97,7 +97,8 @@ COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.loc
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin/year
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/setup-skills.sh /home/$USERNAME/.local/bin/setup-skills.sh
-RUN /home/$USERNAME/.local/bin/setup-skills.sh
+COPY --chown=$USERNAME:$USERNAME skills /home/$USERNAME/.local/src/skills
+RUN LOCAL_SKILLS="/home/$USERNAME/.local/src/skills" /home/$USERNAME/.local/bin/setup-skills.sh
 RUN helix --grammar fetch \
     && helix --grammar build \
     && mkdir /home/$USERNAME/.config/helix/runtime/queries \
