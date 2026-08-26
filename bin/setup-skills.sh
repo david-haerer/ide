@@ -22,6 +22,7 @@ MATT_POCOCK_REPO="${MATT_POCOCK_REPO:-https://github.com/mattpocock/skills.git}"
 MATT_POCOCK_REF="${MATT_POCOCK_REF:-main}"
 PSTACK_REPO="${PSTACK_REPO:-https://github.com/cursor/plugins.git}"
 PSTACK_REF="${PSTACK_REF:-main}"
+LOCAL_SKILLS="${LOCAL_SKILLS:-}"  # optional bundled skills dir (${dir}/<name>/SKILL.md)
 
 SKILLS_ROOT="${HOME}/.agents/skills"
 
@@ -56,6 +57,19 @@ for skill in "$work"/pstack/pstack/skills/*/; do
 	fi
 	install_skill "$skill" "$name"
 done
+
+if [[ -n "$LOCAL_SKILLS" ]]; then
+	echo "==> installing bundled local skills from ${LOCAL_SKILLS}"
+	for skill in "$LOCAL_SKILLS"/*/; do
+		[[ -f "$skill/SKILL.md" ]] || continue
+		name="$(basename "$skill")"
+		if [[ -e "${SKILLS_ROOT}/${name}" ]]; then
+			echo "    name collision -> local-${name}"
+			name="local-${name}"
+		fi
+		install_skill "$skill" "$name"
+	done
+fi
 
 count="$(find "$SKILLS_ROOT" -maxdepth 1 -mindepth 1 -type d | wc -l)"
 echo "==> installed ${count} skills in ${SKILLS_ROOT}"
