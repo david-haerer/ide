@@ -31,7 +31,7 @@ The entrypoint expects these env vars and will fail silently or misconfigure if 
 - `bin/setup-skills.sh` installs community skills at build time into `~/.agents/skills/<name>/SKILL.md` (Agent Skills spec layout — one canonical dir, no symlinks):
   - **codex-cli** reads `$HOME/.agents/skills` directly (verified in `codex-rs/core-skills/src/loader.rs` — the "user-installed skills" root, present since v0.146.0).
   - **omp/pi** reads the same dir via its `agents` provider (`~/.agent/skills` + `~/.agents/skills`, user scope, priority 70).
-  - Sources: `mattpocock/skills` (all non-deprecated categories) and `cursor/plugins` `pstack/skills`; name collisions (`tdd`, `teach`) keep the mattpocock copy canonical and prefix pstack's as `pstack-<name>`. Rebuild the image to refresh from upstream (shallow clones at `main`); override repo/ref with `MATT_POCOCK_REPO`/`MATT_POCOCK_REF`/`PSTACK_REPO`/`PSTACK_REF` build-args.
+- Sources: `mattpocock/skills` (all non-deprecated categories), `cursor/plugins` `pstack/skills`, and `addyosmani/agent-skills`; name collisions (`tdd`, `teach`) keep the mattpocock copy canonical and prefix later sources as `<source>-<name>` (`pstack-`, `addyosmani-`). Rebuild the image to refresh from upstream (shallow clones at `main`); override repo/ref with `MATT_POCOCK_REPO`/`MATT_POCOCK_REF`/`PSTACK_REPO`/`PSTACK_REF`/`ADDYOSMANI_REPO`/`ADDYOSMANI_REF` build-args.
 - `config/helix/config.toml` uses `ayu_dark`, relative line numbers, mouse off, and remaps `w`/`b`/`e` to subword motions.
 - `config/fish/config.fish` defines abbreviations agents may see in shell sessions: `oc` (opencode), `hx` (helix), `lg` (lazygit), `dc` (docker compose), etc.
 
