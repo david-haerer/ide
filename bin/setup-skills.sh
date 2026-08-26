@@ -9,12 +9,12 @@
 #     scope (priority 70). Also read via repo-local .agents/skills if checked in.
 # No symlinks needed — every consumer reads this one directory.
 #
-# Sources: mattpocock/skills (all non-deprecated categories) and
-# cursor/plugins pstack/skills. Name collisions (tdd, teach): mattpocock keeps
-# the canonical name, pstack is prefixed pstack-<name>.
+# Sources: mattpocock/skills (all non-deprecated categories), cursor/plugins
+# pstack/skills, and pbakaus/impeccable. Name collisions (tdd, teach):
+# mattpocock keeps the canonical name, pstack is prefixed pstack-<name>.
 #
 # Updates: rebuild the image — this script clones fresh `main` each build.
-# Override repos/refs via MATT_POCOCK_REPO/REF, PSTACK_REPO/REF build-args.
+# Override repos/refs via MATT_POCOCK_REPO/REF, PSTACK_REPO/REF, IMPECCABLE_REPO/REF build-args.
 
 set -euo pipefail
 
@@ -22,6 +22,8 @@ MATT_POCOCK_REPO="${MATT_POCOCK_REPO:-https://github.com/mattpocock/skills.git}"
 MATT_POCOCK_REF="${MATT_POCOCK_REF:-main}"
 PSTACK_REPO="${PSTACK_REPO:-https://github.com/cursor/plugins.git}"
 PSTACK_REF="${PSTACK_REF:-main}"
+IMPECCABLE_REPO="${IMPECCABLE_REPO:-https://github.com/pbakaus/impeccable.git}"
+IMPECCABLE_REF="${IMPECCABLE_REF:-main}"
 LOCAL_SKILLS="${LOCAL_SKILLS:-}"  # optional bundled skills dir (${dir}/<name>/SKILL.md)
 
 SKILLS_ROOT="${HOME}/.agents/skills"
@@ -57,6 +59,15 @@ for skill in "$work"/pstack/pstack/skills/*/; do
 	fi
 	install_skill "$skill" "$name"
 done
+
+echo "==> cloning pbakaus/impeccable (${IMPECCABLE_REF})"
+git clone --depth 1 --branch "$IMPECCABLE_REF" "$IMPECCABLE_REPO" "$work/impeccable"
+# impeccable ships as one skill dir in Agent Skills layout: .agent/skills/impeccable/SKILL.md.
+if [[ -f "$work/impeccable/.agent/skills/impeccable/SKILL.md" ]]; then
+	install_skill "$work/impeccable/.agent/skills/impeccable" impeccable
+else
+	echo "    ! .agent/skills/impeccable/SKILL.md not found; skipping" >&2
+fi
 
 if [[ -n "$LOCAL_SKILLS" ]]; then
 	echo "==> installing bundled local skills from ${LOCAL_SKILLS}"
