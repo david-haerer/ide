@@ -105,7 +105,8 @@ RUN helix --grammar fetch \
     && cp -r /home/$USERNAME/.config/helix/runtime/grammars/sources/lilypond/queries /home/$USERNAME/.config/helix/runtime/queries/lilypond
 RUN rustup default stable
 RUN uv tool install poetry \
-    && uv tool install python-ly
+    && uv tool install python-ly \
+    && uv tool install ptai
 RUN go install github.com/reteps/dockerfmt@latest \
     && go install github.com/antopolskiy/kanban-md/cmd/kanban-md@latest
 RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent \
