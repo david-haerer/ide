@@ -9,10 +9,11 @@
 #     scope (priority 70). Also read via repo-local .agents/skills if checked in.
 # No symlinks needed — every consumer reads this one directory.
 #
-# Sources: mattpocock/skills (all non-deprecated categories), cursor/plugins
-# pstack/skills, pbakaus/impeccable, and addyosmani/agent-skills.
-# Name collisions (tdd, teach): mattpocock keeps the canonical name, pstack is
-# prefixed pstack-<name>; later sources (addyosmani) are prefixed <source>-<name>.
+# Sources: mattpocock/skills (engineering + productivity only), cursor/plugins
+# (unslop + technical-writing only), pbakaus/impeccable, and addyosmani/agent-skills
+# (all skills). Name collisions (tdd, teach): mattpocock keeps the canonical
+# name, pstack is prefixed pstack-<name>; later sources (addyosmani) are prefixed
+# <source>-<name>.
 #
 # Updates: rebuild the image — this script clones fresh `main` each build.
 # Override repos/refs via MATT_POCOCK_REPO/REF, PSTACK_REPO/REF,
@@ -46,17 +47,22 @@ install_skill() {
 echo "==> cloning mattpocock/skills (${MATT_POCOCK_REF})"
 git clone --depth 1 --branch "$MATT_POCOCK_REF" "$MATT_POCOCK_REPO" "$work/mattpocock"
 # mattpocock nests skills under category dirs: skills/<category>/<name>/SKILL.md.
-for skill in "$work"/mattpocock/skills/*/*/; do
-	[[ -f "$skill/SKILL.md" ]] || continue
-	install_skill "$skill" "$(basename "$skill")"
+# Only keep engineering and productivity.
+for category in engineering productivity; do
+	for skill in "$work/mattpocock/skills/$category"/*/; do
+		[[ -f "$skill/SKILL.md" ]] || continue
+		install_skill "$skill" "$(basename "$skill")"
+	done
 done
 
 echo "==> cloning cursor/plugins (${PSTACK_REF})"
 git clone --depth 1 --branch "$PSTACK_REF" "$PSTACK_REPO" "$work/pstack"
 # pstack skills are flat: pstack/skills/<name>/SKILL.md
+# Only keep unslop and technical-writing.
 for skill in "$work"/pstack/pstack/skills/*/; do
 	[[ -f "$skill/SKILL.md" ]] || continue
 	name="$(basename "$skill")"
+	[[ "$name" == "unslop" || "$name" == "technical-writing" ]] || continue
 	if [[ -e "${SKILLS_ROOT}/${name}" ]]; then
 		echo "    name collision -> pstack-${name}"
 		name="pstack-${name}"
