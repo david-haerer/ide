@@ -1,5 +1,5 @@
 modelRoles:
-  default: openrouter/deepseek/deepseek-v4-flash-0731
+  default: openrouter/z-ai/glm-5.3-flash
 symbolPreset: nerd
 theme:
   dark: titanium
