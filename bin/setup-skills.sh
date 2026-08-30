@@ -10,14 +10,15 @@
 # No symlinks needed — every consumer reads this one directory.
 #
 # Sources: mattpocock/skills (engineering + productivity only), cursor/plugins
-# (unslop + technical-writing only), pbakaus/impeccable, and addyosmani/agent-skills
-# (all skills). Name collisions (tdd, teach): mattpocock keeps the canonical
-# name, pstack is prefixed pstack-<name>; later sources (addyosmani) are prefixed
-# <source>-<name>.
+# (unslop + technical-writing only), pbakaus/impeccable, addyosmani/agent-skills
+# (all skills), and coreyhaines31/marketingskills (schema + programmatic-seo only).
+# Name collisions (tdd, teach): mattpocock keeps the canonical
+# name, pstack is prefixed pstack-<name>; later sources (addyosmani,
+# marketingskills) are prefixed <source>-<name>.
 #
 # Updates: rebuild the image — this script clones fresh `main` each build.
 # Override repos/refs via MATT_POCOCK_REPO/REF, PSTACK_REPO/REF,
-# IMPECCABLE_REPO/REF, ADDYOSMANI_REPO/REF build-args.
+# IMPECCABLE_REPO/REF, ADDYOSMANI_REPO/REF, MARKETING_REPO/REF build-args.
 
 set -euo pipefail
 
@@ -29,6 +30,8 @@ IMPECCABLE_REPO="${IMPECCABLE_REPO:-https://github.com/pbakaus/impeccable.git}"
 IMPECCABLE_REF="${IMPECCABLE_REF:-main}"
 ADDYOSMANI_REPO="${ADDYOSMANI_REPO:-https://github.com/addyosmani/agent-skills.git}"
 ADDYOSMANI_REF="${ADDYOSMANI_REF:-main}"
+MARKETING_REPO="${MARKETING_REPO:-https://github.com/coreyhaines31/marketingskills.git}"
+MARKETING_REF="${MARKETING_REF:-main}"
 LOCAL_SKILLS="${LOCAL_SKILLS:-}"  # optional bundled skills dir (${dir}/<name>/SKILL.md)
 
 SKILLS_ROOT="${HOME}/.agents/skills"
@@ -90,6 +93,23 @@ for skill in "$work"/addyosmani/skills/*/; do
 		name="addyosmani-${name}"
 	fi
 	install_skill "$skill" "$name"
+done
+
+echo "==> cloning coreyhaines31/marketingskills (${MARKETING_REF})"
+git clone --depth 1 --branch "$MARKETING_REF" "$MARKETING_REPO" "$work/marketing"
+# marketingskills skills are flat: skills/<name>/SKILL.md
+# Only keep the SEO skills this image uses.
+for skill in schema programmatic-seo; do
+	[[ -f "$work/marketing/skills/$skill/SKILL.md" ]] || {
+		echo "    ! skills/$skill/SKILL.md not found; skipping" >&2
+		continue
+	}
+	name="$skill"
+	if [[ -e "${SKILLS_ROOT}/${name}" ]]; then
+		echo "    name collision -> marketing-${name}"
+		name="marketing-${name}"
+	fi
+	install_skill "$work/marketing/skills/$skill" "$name"
 done
 
 if [[ -n "$LOCAL_SKILLS" ]]; then
