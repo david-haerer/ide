@@ -74,6 +74,16 @@ RUN pacman -Syu --noconfirm \
 RUN curl -fsSL "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
     | tar xz --strip-components=1 -C /usr/bin/ \
     && mkdir -p /etc/docker && echo '{"storage-driver": "vfs"}' >/etc/docker/daemon.json
+ARG ZMX_CACHE_BUST=1
+RUN set -eux; \
+    url="$(curl -fsSL https://api.github.com/repos/neurosnap/zmx/releases/latest \
+        | jq -r '.assets[] | select(.name | endswith("linux-x86_64.tar.gz")) | .browser_download_url')"; \
+    curl -fsSL "$url" -o /tmp/zmx.tgz; \
+    curl -fsSL "$url.sha256" | awk '{print $1}' >/tmp/zmx.want; \
+    echo "$(cat /tmp/zmx.want)  /tmp/zmx.tgz" | sha256sum -c -; \
+    tar xz -C /usr/local/bin -f /tmp/zmx.tgz \
+    && chmod 755 /usr/local/bin/zmx \
+    && rm -f /tmp/zmx.tgz /tmp/zmx.want
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
