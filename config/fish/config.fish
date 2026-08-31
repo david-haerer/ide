@@ -18,6 +18,7 @@ abbr c "clear; eza --icons=always"
 abbr ... cd ../..
 abbr .... cd ../../..
 abbr b cd -
+abbr x zmx
 abbr cmx chmod
 abbr cmx chmod +x
 abbr dc docker compose
