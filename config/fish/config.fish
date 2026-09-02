@@ -18,25 +18,26 @@ function xa
     zmx attach $argv[1] fish
 end
 
-abbr c "clear; eza --icons=always"
 abbr ... cd ../..
 abbr .... cd ../../..
 abbr b cd -
-abbr x zmx
-abbr xl zmx list
+abbr c "clear; eza --icons=always"
 abbr cmx chmod
 abbr cmx chmod +x
 abbr dc docker compose
 abbr e exit
 abbr g git
 abbr hx helix
+abbr kb kanban-md tui
 abbr l eza --icons=always
 abbr la eza --icons=always -a
-abbr ll eza --icons=always -l
-abbr lla eza --icons=always -la
 abbr ld lazydocker
 abbr lg lazygit
+abbr ll eza --icons=always -l
+abbr lla eza --icons=always -la
 abbr n note
+abbr x zmx
+abbr xl zmx list
 
 set -g fish_greeting
 set -xg YEAR $(year)
