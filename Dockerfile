@@ -107,14 +107,14 @@ RUN helix --grammar fetch \
     && helix --grammar build \
     && mkdir /home/$USERNAME/.config/helix/runtime/queries \
     && cp -r /home/$USERNAME/.config/helix/runtime/grammars/sources/lilypond/queries /home/$USERNAME/.config/helix/runtime/queries/lilypond
-RUN rustup default stable
-RUN uv tool install poetry \
-    && uv tool install python-ly \
+RUN rustup default stable \
+    && cargo install emeraldian
+RUN uv tool install python-ly \
     && uv tool install ptai
 RUN go install github.com/reteps/dockerfmt@latest \
-    && go install github.com/antopolskiy/kanban-md/cmd/kanban-md@latest
+    && go install github.com/antopolskiy/kanban-md/cmd/kanban-md@latest \
+    && go install github.com/mdsakalu/zmx-session-manager@latest
 RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent \
-    && bun add -g --ignore-scripts @devcontainers/cli \
     && bun add -g --ignore-scripts @devcontainers/cli \
     && bun add -g --ignore-scripts @oh-my-pi/pi-coding-agent
 ENTRYPOINT ["entrypoint"]
