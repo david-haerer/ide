@@ -5,7 +5,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
 RUN pacman -Syu --noconfirm \
     7zip \
-    azure-cli \
     base-devel \
     bash-language-server \
     bat \
@@ -41,8 +40,6 @@ RUN pacman -Syu --noconfirm \
     man \
     marksman \
     nmap \
-    openai-codex \
-    opencode \
     opentofu \
     openvpn \
     pandoc \
@@ -100,7 +97,6 @@ COPY --chown=$USERNAME:$USERNAME config/git /home/$USERNAME/.config/git
 COPY --chown=$USERNAME:$USERNAME config/helix /home/$USERNAME/.config/helix
 COPY --chown=$USERNAME:$USERNAME config/lazydocker /home/$USERNAME/.config/lazydocker
 COPY --chown=$USERNAME:$USERNAME config/lazygit /home/$USERNAME/.config/lazygit
-COPY --chown=$USERNAME:$USERNAME config/opencode /home/$USERNAME/.config/opencode
 COPY --chown=$USERNAME:$USERNAME config/omp /home/$USERNAME/.omp
 COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/starship.toml
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
