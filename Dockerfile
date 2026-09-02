@@ -91,6 +91,7 @@ USER $USERNAME
 WORKDIR /home/$USERNAME
 ENV COLORTERM="truecolor"
 ENV EDITOR="helix"
+ENV DISABLE_TELEMETRY="1"
 ENV PATH="/home/$USERNAME/bin:/home/$USERNAME/.local/bin:$PATH"
 COPY --chown=$USERNAME:$USERNAME config/fish /home/$USERNAME/.config/fish
 COPY --chown=$USERNAME:$USERNAME config/git /home/$USERNAME/.config/git
