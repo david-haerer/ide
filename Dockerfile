@@ -103,7 +103,22 @@ COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/st
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin/year
-COPY --chown=$USERNAME:$USERNAME skills /home/$USERNAME/.agents/skills
+# Agent skills installed via the skills CLI (https://skills.sh). The CLI cannot clone
+# an arbitrary pinned commit (git rejects `clone --branch <sha>`), so sources track
+# main; bump SKILLS_CACHE_BUST to refresh the layer. `-a cline` targets ~/.agents/skills,
+# which omp and codex-cli read (`universal` would land in ~/.config/agents/skills instead).
+# meeting-briefing is local-only and stays vendored (COPY below).
+ARG SKILLS_CACHE_BUST=1
+RUN set -eux; \
+    base=https://github.com/mattpocock/skills/tree/main/skills; \
+    bunx skills add "$base/engineering/domain-modeling" -g -a cline -y; \
+    bunx skills add "$base/engineering/grill-with-docs" -g -a cline -y; \
+    bunx skills add "$base/productivity/grilling" -g -a cline -y; \
+    bunx skills add "$base/productivity/to-questionnaire" -g -a cline -y; \
+    pstack=https://github.com/cursor/plugins/tree/main/pstack/skills; \
+    bunx skills add "$pstack/unslop" -g -a cline -y; \
+    bunx skills add "$pstack/technical-writing" -g -a cline -y
+COPY --chown=$USERNAME:$USERNAME skills/meeting-briefing /home/$USERNAME/.agents/skills/meeting-briefing
 RUN helix --grammar fetch \
     && helix --grammar build \
     && mkdir /home/$USERNAME/.config/helix/runtime/queries \
