@@ -31,7 +31,6 @@ abbr ll eza --icons=always -l
 abbr lla eza --icons=always -la
 abbr ld lazydocker
 abbr lg lazygit
-abbr oc opencode
 abbr n note
 
 set -g fish_greeting
