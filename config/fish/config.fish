@@ -14,11 +14,16 @@ function y
     rm -f -- "$tmp"
 end
 
+function xa
+    zmx attach $argv[1] fish
+end
+
 abbr c "clear; eza --icons=always"
 abbr ... cd ../..
 abbr .... cd ../../..
 abbr b cd -
 abbr x zmx
+abbr xl zmx list
 abbr cmx chmod
 abbr cmx chmod +x
 abbr dc docker compose
