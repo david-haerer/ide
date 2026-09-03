@@ -1,0 +1,540 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
+import os
+import subprocess
+from collections import defaultdict
+from pathlib import Path
+from re import fullmatch, match
+from typing import Optional
+
+# -- CONSTS --
+
+
+NONE_TIME = "--:--"
+
+PATTERN_DATE = "%Y-%m-%d"
+PATTERN_DAY = "%a"
+PATTERN_TIME = "%H:%M"
+
+REGEX_DATE = r"[0-9]{4}-[0-9]{2}-[0-9]{2}"
+REGEX_DAY = r"[A-z ]{3}"
+REGEX_TIME = "(" + "|".join(["[0-9]{2}:[0-9]{2}", NONE_TIME]) + ")"
+
+UNASSIGNED_PROJECT = "Unassigned"
+
+RED = "\033[91m"
+GREEN = "\033[92m"
+BOLD = "\033[1m"
+ITALIC = "\033[3m"
+RESET = "\033[0m"
+
+# One chart character represents this much recorded time. Keeping this
+# constant makes the same project duration occupy the same width on every day.
+CHART_MINUTES_PER_CHAR = 15
+PROJECT_SUMMARY_DAYS = 14
+
+# Terminal base colors, letting the active terminal theme (such as Ayu Dark)
+# determine their exact appearance.
+PROJECT_COLORS = (
+    31,  # red
+    36,  # cyan
+    33,  # yellow
+    34,  # blue
+    32,  # green
+    35,  # magenta
+    91,  # bright red
+    96,  # bright cyan
+    93,  # bright yellow
+    94,  # bright blue
+    92,  # bright green
+    95,  # bright magenta
+)
+
+# -- UTILS --
+
+
+def today() -> dt.date:
+    return dt.datetime.now().date()
+
+
+def now() -> dt.time:
+    return dt.datetime.now().time()
+
+
+def is_date(date: str) -> bool:
+    return match(REGEX_DATE, date)
+
+
+def is_time(time: str) -> bool:
+    return match(REGEX_TIME, time)
+
+
+def is_record(text: str) -> bool:
+    pattern = " ".join([REGEX_DAY, REGEX_DATE, REGEX_TIME, REGEX_TIME])
+    return fullmatch(pattern + r"(?: .+)?", text) is not None
+
+
+def is_project(project: str) -> bool:
+    return bool(project.strip()) and "\n" not in project and "\r" not in project
+
+
+def text_to_date(text: str) -> dt.date:
+    return dt.datetime.strptime(text, PATTERN_DATE).date()
+
+
+def date_to_text(date: dt.date) -> str:
+    return date.strftime(f"{PATTERN_DAY} {PATTERN_DATE}")
+
+
+def text_to_time(text: str) -> dt.time | None:
+    if text == NONE_TIME:
+        return None
+    return dt.datetime.strptime(text, PATTERN_TIME).time()
+
+
+def time_to_text(time: dt.time | None) -> str:
+    if time is None:
+        return NONE_TIME
+    return time.strftime(PATTERN_TIME)
+
+
+def timedelta_to_text(timedelta: dt.timedelta | None) -> str:
+    if timedelta is None:
+        return NONE_TIME
+    hours = timedelta.days * 24 + timedelta.seconds // 3600
+    minutes = (timedelta.seconds // 60) % 60
+    text = f"{hours:2}h {minutes:2}m"
+    return text
+
+
+def timedelta_to_clock_text(timedelta: dt.timedelta | None) -> str:
+    if timedelta is None:
+        return NONE_TIME
+    total_minutes = int(timedelta.total_seconds() // 60)
+    hours, minutes = divmod(total_minutes, 60)
+    return f"{hours:02}:{minutes:02}"
+
+
+def signed_timedelta_to_text(timedelta: dt.timedelta | None) -> str:
+    if timedelta is None:
+        return NONE_TIME
+    sign, color = "+", GREEN
+    if timedelta.days < 0:
+        timedelta = dt.timedelta() - timedelta
+        sign, color = "-", RED
+    hours = timedelta.seconds // 3600
+    minutes = (timedelta.seconds // 60) % 60
+    text = f"{sign} {hours}h {minutes:2}m"
+    return f"{color}{text}{RESET}"
+
+
+def text_to_timedelta(text: str) -> dt.timedelta | None:
+    if text == NONE_TIME:
+        return None
+    time = dt.datetime.strptime(text, PATTERN_TIME)
+    return dt.timedelta(hours=time.hour, minutes=time.minute)
+
+
+def sum_timedeltas(timedeltas: list[dt.timedelta]) -> dt.timedelta:
+    return sum(filter(lambda td: td is not None, timedeltas), dt.timedelta())
+
+
+def project_color(project: str, projects: list[str] | None = None) -> str:
+    """Return a bright ANSI color, spaced apart from the other projects."""
+    if projects:
+        ordered_projects = sorted(
+            set(projects), key=lambda name: (name.casefold(), name)
+        )
+        colour = PROJECT_COLORS[
+            ordered_projects.index(project) % len(PROJECT_COLORS)
+        ]
+    else:
+        digest = hashlib.sha256(project.encode("utf-8")).digest()
+        colour = PROJECT_COLORS[
+            int.from_bytes(digest[:4], "big") % len(PROJECT_COLORS)
+        ]
+    return f"\033[{colour}m"
+
+
+def chart_cells(project_worktimes: dict[str, dt.timedelta]) -> dict[str, int]:
+    """Allocate 15-minute chart cells, preserving the total bar width."""
+    minutes = {
+        project: max(0, worktime.total_seconds() / 60)
+        for project, worktime in project_worktimes.items()
+    }
+    total_minutes = sum(minutes.values())
+    if not total_minutes:
+        return {project: 0 for project in sorted(minutes)}
+
+    total_cells = max(
+        1,
+        int((total_minutes + CHART_MINUTES_PER_CHAR - 1) // CHART_MINUTES_PER_CHAR),
+    )
+    exact = {
+        project: value / CHART_MINUTES_PER_CHAR for project, value in minutes.items()
+    }
+    cells = {project: int(value) for project, value in exact.items()}
+    remaining = total_cells - sum(cells.values())
+    order = sorted(
+        exact,
+        key=lambda project: (
+            -(exact[project] - cells[project]),
+            project.casefold(),
+            project,
+        ),
+    )
+    for project in order[:remaining]:
+        cells[project] += 1
+    return cells
+
+
+def project_chart(
+    project_worktimes: dict[str, dt.timedelta | None],
+    color_projects: list[str] | None = None,
+) -> str | None:
+    """Render a daily stacked bar with alphabetically sorted projects."""
+    if not project_worktimes or any(
+        value is None for value in project_worktimes.values()
+    ):
+        return None
+    worktimes = {
+        project: value
+        for project, value in project_worktimes.items()
+        if project != UNASSIGNED_PROJECT
+        and value is not None
+        and value > dt.timedelta()
+    }
+    if not worktimes:
+        return None
+    cells = chart_cells(worktimes)
+    projects = sorted(worktimes, key=lambda project: (project.casefold(), project))
+    color_projects = color_projects or projects
+    bar = "".join(
+        f"{project_color(project, color_projects)}{'█' * cells[project]}{RESET}"
+        for project in projects
+    )
+    return f"  {bar}"
+
+
+# -- MODEL --
+
+
+class Record:
+    def __init__(
+        self: Record,
+        day: Optional[dt.date] = None,
+        start: Optional[dt.time] = None,
+        stop: Optional[dt.time] = None,
+        project: Optional[str] = None,
+    ):
+        assert (start, stop) != (None, None), "Either start or stop must be defined!"
+        if None not in (start, stop):
+            assert start <= stop, "Start must come before stop!"
+        self.day = day or today()
+        self.start = start
+        self.stop = stop
+        self.project = project
+
+    @classmethod
+    def from_text(cls, text) -> Record:
+        assert is_record(text)
+        parts = text.split(maxsplit=4)
+        _, day, start, stop = parts[:4]
+        project = parts[4] if len(parts) == 5 else None
+        return Record(
+            day=text_to_date(day),
+            start=text_to_time(start),
+            stop=text_to_time(stop),
+            project=project,
+        )
+
+    @classmethod
+    def from_start(cls, start, project) -> Record:
+        assert is_time(start)
+        assert start != NONE_TIME
+        assert is_project(project)
+        return Record(day=today(), start=text_to_time(start), stop=None, project=project)
+
+    @classmethod
+    def from_stop(cls, stop) -> Record:
+        assert is_time(stop)
+        assert stop != NONE_TIME
+        return Record(day=today(), start=None, stop=text_to_time(stop))
+
+    @property
+    def worktime(self) -> dt.timedelta | None:
+        if None in (self.start, self.stop):
+            return None
+        return dt.datetime.combine(self.day, self.stop) - dt.datetime.combine(
+            self.day, self.start
+        )
+
+    @property
+    def text(self):
+        day = date_to_text(self.day)
+        start = time_to_text(self.start)
+        stop = time_to_text(self.stop)
+        project = f" {self.project}" if self.project is not None else ""
+        return f"{day} {start} {stop}{project}"
+
+    def __str__(self):
+        worktime = timedelta_to_text(self.worktime)
+        return f"{self.text} | {worktime}"
+
+
+class Day:
+    def __init__(
+        self: Day, day: dt.date, worktime_reference: dt.timedelta, records: list[Record]
+    ):
+        self.day, self.worktime_reference, self.records = (
+            day,
+            worktime_reference,
+            records,
+        )
+
+    @classmethod
+    def from_record(cls, record: Record, worktime_reference: dt.timedelta) -> Day:
+        return Day(
+            day=record.day, worktime_reference=worktime_reference, records=[record]
+        )
+
+    def add_record(self, record: Record):
+        assert record.day == self.day, "Record must be from the same day!"
+        self.records.append(record)
+
+    @property
+    def worktime(self) -> dt.timedelta | None:
+        worktimes = [record.worktime for record in self.records]
+        if None in worktimes:
+            return None
+        return sum_timedeltas(worktimes)
+
+    @property
+    def delta(self):
+        worktime = self.worktime
+        if worktime is None:
+            return None
+        return worktime - self.worktime_reference
+
+    @property
+    def project_worktimes(self) -> dict[str, dt.timedelta | None]:
+        projects: dict[str, list[dt.timedelta | None]] = defaultdict(list)
+        for record in self.records:
+            projects[record.project or UNASSIGNED_PROJECT].append(record.worktime)
+        return {
+            project: None if None in worktimes else sum_timedeltas(worktimes)
+            for project, worktimes in projects.items()
+        }
+
+    def __str__(self) -> str:
+        day = date_to_text(self.day)
+        worktime = timedelta_to_text(self.worktime)
+        delta = signed_timedelta_to_text(self.delta)
+        return f"{day} | {worktime} | {ITALIC}{delta}{RESET}"
+
+
+# -- DB --
+
+
+class DB:
+    def __init__(self, path, worktime, editor):
+        self.path = path
+        self.worktime = worktime
+        self.records = self.load()
+        self.editor = editor
+
+    def load(self):
+        if not self.path.is_file():
+            return []
+        with open(self.path, "r", encoding="utf-8") as file:
+            lines = [line.replace("\n", "") for line in file.readlines()]
+        records = []
+        for line in lines:
+            try:
+                records.append(Record.from_text(line))
+            except AssertionError as error:
+                print(error)
+                print(f"{self.path}#L{lines.index(line)}: Invalid record '{line}'!")
+                print(f"Edit {self.path} to correct the record.")
+                exit(1)
+        return records
+
+    def save(self):
+        with open(self.path, "w", encoding="utf-8") as file:
+            file.write("\n".join(record.text for record in self.records) + "\n")
+
+    @property
+    def empty(self) -> bool:
+        return len(self.records) == 0
+
+    @property
+    def last(self) -> Record:
+        assert not self.empty, "DB is empty, no last record!"
+        return self.records[-1]
+
+    @property
+    def days(self) -> list[Day]:
+        days = {}
+        for record in self.records:
+            if record.day not in days:
+                days[record.day] = Day.from_record(record, self.worktime)
+            else:
+                days[record.day].add_record(record)
+        return days.values()
+
+    def start(self, project: str, time: str):
+        assert is_project(project), "Project name must not be empty!"
+        if time is not None:
+            assert is_time(time), f"Time string '{time}' is invalid!"
+        time = now() if time is None else text_to_time(time)
+        self.records.append(Record(start=time, project=project))
+        self.save()
+
+    def stop(self, time: str):
+        if time is not None:
+            assert is_time(time), f"Time string '{time}' is invalid!"
+        time = now() if time is None else text_to_time(time)
+        if self.empty or self.last.stop is not None:
+            self.records.append(Record(stop=time))
+        else:
+            self.last.stop = time
+        self.save()
+
+    def log(self):
+        def print_line():
+            print("-" * 35)
+
+        if self.empty:
+            print("No work time recorded yet.")
+            return
+        if self.records[-1].stop is None:
+            self.records[-1].stop = now()
+        days = list(self.days)
+        color_projects = sorted(
+            {
+                record.project
+                for record in self.records
+                if record.project and record.project != UNASSIGNED_PROJECT
+            },
+            key=lambda project: (project.casefold(), project),
+        )
+        summary_end = today()
+        summary_start = summary_end - dt.timedelta(days=PROJECT_SUMMARY_DAYS - 1)
+        summary_day_count = sum(
+            1
+            for day in days
+            if summary_start <= day.day <= summary_end
+            and day.worktime is not None
+            and day.worktime > dt.timedelta()
+        )
+        project_totals: dict[str, list[dt.timedelta | None]] = defaultdict(list)
+        wd_old = 7
+        for day in days:
+            wd = day.day.weekday()
+            if wd <= wd_old:
+                week = day.day.strftime("%G W%V")
+                print(f"\n{BOLD}{week}{RESET}")
+            if summary_start <= day.day <= summary_end:
+                for project, worktime in sorted(
+                    day.project_worktimes.items(),
+                    key=lambda item: (item[0].casefold(), item[0]),
+                ):
+                    if project == UNASSIGNED_PROJECT:
+                        continue
+                    project_totals[project].append(worktime)
+            chart = project_chart(day.project_worktimes, color_projects)
+            print(f"{day}{chart or ''}")
+            wd_old = wd
+        total_worktime = timedelta_to_text(
+            sum_timedeltas([day.worktime for day in days if day.worktime])
+        )
+        total_delta = signed_timedelta_to_text(
+            sum_timedeltas([day.delta for day in days])
+        )
+        print_line()
+        print(f"{BOLD}Total: {total_worktime: >17} | {ITALIC}{total_delta}{RESET}")
+        print_line()
+        if project_totals:
+            print(f"{BOLD}Projects{RESET}")
+            for project, worktimes in sorted(
+                project_totals.items(),
+                key=lambda item: (item[0].casefold(), item[0]),
+            ):
+                total_worktime = (
+                    None if None in worktimes else sum_timedeltas(worktimes)
+                )
+                worktime = (
+                    None
+                    if total_worktime is None or summary_day_count == 0
+                    else total_worktime / summary_day_count
+                )
+                color = project_color(project, color_projects)
+                print(
+                    f"{color}█{RESET} {project}: "
+                    f"{timedelta_to_clock_text(worktime)}"
+                )
+            print_line()
+
+    # def stats(self):
+    #     days = [[]] * 7
+    #     for day in self.days:
+    #         if day.worktime is None:
+    #             continue
+    #         days[day.day.weekday()].append(day.worktime)
+
+    #     for i, day in enumerate(days):
+    #         print(day)
+    #         days[i] = sum(day, dt.timedelta(0)) / len(day)
+
+    #     for day in days:
+    #         print(day)
+
+    def edit(self):
+        subprocess.call([self.editor, self.path])
+
+    def code(self):
+        subprocess.call([self.editor, Path(__file__)])
+
+
+# -- APP --
+
+path = Path(os.getenv("DATA_DIR", ".")) / "arbeitszeit.txt"
+worktime = text_to_timedelta(os.getenv("WORKTIME", "08:00"))
+editor = os.getenv("EDITOR", "vi")
+db = DB(path, worktime, editor)
+
+parser = argparse.ArgumentParser(description="Log your working time.")
+subparser = parser.add_subparsers(required=True)
+
+parser_start = subparser.add_parser("start", help="Start working.")
+parser_start.add_argument("project", help="Name of the project being worked on.")
+parser_start.add_argument(
+    "time", nargs="?", default=None, help="Optional start time HH:MM. Default: now"
+)
+parser_start.set_defaults(func=lambda args: db.start(args.project, args.time))
+
+parser_stop = subparser.add_parser("stop", help="Stop working.")
+parser_stop.add_argument(
+    "time", nargs="?", default=None, help="Optional stop time HH:MM, Default: now"
+)
+parser_stop.set_defaults(func=lambda args: db.stop(args.time))
+
+parser_log = subparser.add_parser("log", help="Show the log entries.")
+parser_log.set_defaults(func=lambda args: db.log())
+
+# parser_log = subparser.add_parser("stats", help="show statistics.")
+# parser_log.set_defaults(func=lambda args: db.stats())
+
+parser_edit = subparser.add_parser("edit", help="Edit the database.")
+parser_edit.set_defaults(func=lambda args: db.edit())
+
+parser_edit = subparser.add_parser("code", help="Code the script.")
+parser_edit.set_defaults(func=lambda args: db.code())
+
+args = parser.parse_args()
+args.func(args)
