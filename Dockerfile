@@ -103,6 +103,7 @@ COPY --chown=$USERNAME:$USERNAME config/starship.toml /home/$USERNAME/.config/st
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/entrypoint /home/$USERNAME/.local/bin/entrypoint
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/note /home/$USERNAME/.local/bin/note
 COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/year /home/$USERNAME/.local/bin/year
+COPY --chown=$USERNAME:$USERNAME --chmod=755 bin/arbeitszeit /home/$USERNAME/.local/bin/arbeitszeit
 ARG SKILLS_CACHE_BUST=1
 RUN set -eux; \
     base=https://github.com/mattpocock/skills/tree/main/skills; \
