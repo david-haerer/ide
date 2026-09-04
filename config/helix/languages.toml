@@ -146,6 +146,7 @@ formatter = { command = "bunx", args = [
   "yaml",
   "--print-width",
   "120",
+  "--single-quote",
 ] }
 auto-format = true
 
