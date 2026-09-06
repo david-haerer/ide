@@ -9,6 +9,7 @@ RUN pacman -Syu --noconfirm \
     base-devel \
     bash-language-server \
     bat \
+    bind \
     btop \
     bun \
     debugedit \
