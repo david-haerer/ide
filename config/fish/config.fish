@@ -38,6 +38,7 @@ abbr lla eza --icons=always -la
 abbr n note
 abbr x zmx
 abbr xl zmx list
+abbr s zmx-session-manager
 
 set -g fish_greeting
 set -xg YEAR $(year)
