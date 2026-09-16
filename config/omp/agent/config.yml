@@ -1,5 +1,5 @@
 modelRoles:
-  default: openrouter/z-ai/glm-5.3-flash:auto
+  default: openrouter/deepseek/deepseek-v4-flash-0731
   smol: openrouter/deepseek/deepseek-v4-flash-0731
 enabledModels:
   - openrouter/z-ai/glm-5.3-flash
