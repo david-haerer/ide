@@ -14,9 +14,6 @@ function y
     rm -f -- "$tmp"
 end
 
-function xa
-    zmx attach $argv[1] fish
-end
 
 abbr ... cd ../..
 abbr .... cd ../../..
@@ -24,7 +21,7 @@ abbr b cd -
 abbr c "clear; eza --icons=always"
 abbr cmx chmod
 abbr cmx chmod +x
-abbr dc docker compose
+abbr p podman
 abbr e exit
 abbr g git
 abbr hx helix
@@ -36,9 +33,6 @@ abbr lg lazygit
 abbr ll eza --icons=always -l
 abbr lla eza --icons=always -la
 abbr n note
-abbr x zmx
-abbr xl zmx list
-abbr s zmx-session-manager
 
 set -g fish_greeting
 set -xg YEAR $(year)
