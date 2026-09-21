@@ -84,6 +84,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/$USERNAME
 USER $USERNAME
 WORKDIR /home/$USERNAME
+ENV SHELL=/usr/bin/fish
 ENV COLORTERM="truecolor"
 ENV EDITOR="helix"
 ENV DISABLE_TELEMETRY="1"
