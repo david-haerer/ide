@@ -5,7 +5,7 @@ This repo defines a Docker image, not an application. Changes are primarily to `
 ## Build
 
 ```bash
-docker build -t ide .
+podman build -t ide .
 ```
 
 ## Runtime requirements
@@ -15,6 +15,12 @@ The entrypoint expects these env vars and will fail silently or misconfigure if 
 - `GIT_USER_NAME` / `GIT_USER_EMAIL` — sets `git config --global user.*`
 - `GITHUB_TOKEN` — written to `~/.netrc` for GitHub auth
 - `OPENROUTER_API_KEY` — written to `~/.local/share/opencode/auth.json`
+
+Containers are driven from the host via podman's API socket (client-only in the image, `CONTAINER_HOST` points at `/run/podman/podman.sock`). Start the host socket with `systemctl --user start podman.socket` and run the image with:
+
+```bash
+podman run -v /run/user/1000/podman/podman.sock:/run/podman/podman.sock --security-opt label=disable ide
+```
 
 ## User & shell
 
@@ -33,7 +39,7 @@ The entrypoint expects these env vars and will fail silently or misconfigure if 
   - **codex-cli** reads `$HOME/.agents/skills` directly (verified in `codex-rs/core-skills/src/loader.rs` — the "user-installed skills" root, present since v0.146.0).
   - **omp/pi** reads the same dir via its `agents` provider (`~/.agent/skills` + `~/.agents/skills`, user scope, priority 70).
 - `config/helix/config.toml` uses `ayu_dark`, relative line numbers, mouse off, and remaps `w`/`b`/`e` to subword motions.
-- `config/fish/config.fish` defines abbreviations agents may see in shell sessions: `oc` (opencode), `hx` (helix), `lg` (lazygit), `dc` (docker compose), etc.
+- `config/fish/config.fish` defines abbreviations agents may see in shell sessions: `oc` (opencode), `hx` (helix), `lg` (lazygit), `p` (podman), etc.
 
 ## Editing this repo
 
