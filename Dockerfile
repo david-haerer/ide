@@ -84,6 +84,12 @@ RUN set -eux; \
     tar xz -C /usr/local/bin -f /tmp/zmx.tgz \
     && chmod 755 /usr/local/bin/zmx \
     && rm -f /tmp/zmx.tgz /tmp/zmx.want
+ARG HERDR_CACHE_BUST=1
+RUN set -eux; \
+    url="$(curl -fsSL https://api.github.com/repos/herdrdev/herdr/releases/latest \
+        | jq -r '.assets[] | select(.name == "herdr-linux-x86_64") | .browser_download_url')"; \
+    curl -fsSL "$url" -o /usr/local/bin/herdr; \
+    chmod 755 /usr/local/bin/herdr
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
