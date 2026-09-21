@@ -1,5 +1,4 @@
 FROM archlinux:latest
-ARG DOCKER_VERSION=29.6.2
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ >/etc/timezone
 RUN sed -i 's/^#DisableSandbox/DisableSandbox/' /etc/pacman.conf
@@ -14,7 +13,6 @@ RUN pacman -Syu --noconfirm \
     bun \
     debugedit \
     diffnav \
-    docker \
     docker-compose \
     eslint-language-server \
     eza \
@@ -46,6 +44,7 @@ RUN pacman -Syu --noconfirm \
     opentofu \
     openvpn \
     pandoc \
+    podman \
     poppler \
     reflector \
     resvg \
@@ -68,22 +67,9 @@ RUN pacman -Syu --noconfirm \
     yazi \
     zig \
     zoxide \
-    && pacman -R docker --noconfirm \
     && pacman -Scc --noconfirm \
     && reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
-RUN curl -fsSL "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" \
-    | tar xz --strip-components=1 -C /usr/bin/ \
-    && mkdir -p /etc/docker && echo '{"storage-driver": "vfs"}' >/etc/docker/daemon.json
-ARG ZMX_CACHE_BUST=1
-RUN set -eux; \
-    url="$(curl -fsSL https://api.github.com/repos/neurosnap/zmx/releases/latest \
-        | jq -r '.assets[] | select(.name | endswith("linux-x86_64.tar.gz")) | .browser_download_url')"; \
-    curl -fsSL "$url" -o /tmp/zmx.tgz; \
-    curl -fsSL "$url.sha256" | awk '{print $1}' >/tmp/zmx.want; \
-    echo "$(cat /tmp/zmx.want)  /tmp/zmx.tgz" | sha256sum -c -; \
-    tar xz -C /usr/local/bin -f /tmp/zmx.tgz \
-    && chmod 755 /usr/local/bin/zmx \
-    && rm -f /tmp/zmx.tgz /tmp/zmx.want
+ENV CONTAINER_HOST=unix:///run/podman/podman.sock
 ARG HERDR_CACHE_BUST=1
 RUN set -eux; \
     url="$(curl -fsSL https://api.github.com/repos/herdrdev/herdr/releases/latest \
@@ -94,7 +80,7 @@ ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=1000
 RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -G docker -m -s /usr/bin/fish $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m -s /usr/bin/fish $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers.d/$USERNAME
 USER $USERNAME
 WORKDIR /home/$USERNAME
@@ -134,8 +120,7 @@ RUN rustup default stable \
 RUN uv tool install python-ly \
     && uv tool install ptai
 RUN go install github.com/reteps/dockerfmt@latest \
-    && go install github.com/antopolskiy/kanban-md/cmd/kanban-md@latest \
-    && go install github.com/mdsakalu/zmx-session-manager@latest
+    && go install github.com/antopolskiy/kanban-md/cmd/kanban-md@latest
 RUN bun add -g --ignore-scripts @earendil-works/pi-coding-agent \
     && bun add -g --ignore-scripts @devcontainers/cli \
     && bun add -g --ignore-scripts @oh-my-pi/pi-coding-agent
