@@ -1,13 +1,15 @@
 modelRoles:
-  default: openai-codex/gpt-5.6-luna
-  smol: openai-codex/gpt-5.6-luna
+  default: cortecs/deepseek-v4-flash-0731:high
+  smol: cortecs/deepseek-v4-flash-0731
+  web: web/kagi
 enabledModels:
   - openrouter/z-ai/glm-5.3-flash
   - openrouter/deepseek/deepseek-v4-flash-0731
-  - openrouter/deepseek/deepseek-v4.1-flash
   - openrouter/xiaomi/mimo-v2.6-pro
   - openrouter/xiaomi/mimo-v2.6-flash
   - openai-codex/gpt-5.6-luna
+  - cortecs/glm-5.3-flash
+  - cortecs/deepseek-v4-flash-0731
 symbolPreset: nerd
 theme:
   dark: titanium
