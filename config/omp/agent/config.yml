@@ -1,9 +1,13 @@
 modelRoles:
-  default: openrouter/deepseek/deepseek-v4-flash-0731
-  smol: openrouter/deepseek/deepseek-v4-flash-0731
+  default: openai-codex/gpt-5.6-luna
+  smol: openai-codex/gpt-5.6-luna
 enabledModels:
   - openrouter/z-ai/glm-5.3-flash
   - openrouter/deepseek/deepseek-v4-flash-0731
+  - openrouter/deepseek/deepseek-v4.1-flash
+  - openrouter/xiaomi/mimo-v2.6-pro
+  - openrouter/xiaomi/mimo-v2.6-flash
+  - openai-codex/gpt-5.6-luna
 symbolPreset: nerd
 theme:
   dark: titanium
